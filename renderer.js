@@ -1,5 +1,5 @@
-import { COLOR_RULES } from './colorRules.js?v=4';
-import { resolveImage } from './imageResolver.js?v=4';
+import { COLOR_RULES } from './colorRules.js';
+import { resolveImage } from './imageResolver.js';
 
 /**
  * Normalize a color name to a safe key:
