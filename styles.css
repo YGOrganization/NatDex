@@ -53,7 +53,7 @@ body {
 
 .card-row-image {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1 / 1;
   background: var(--card-color, #444);
   border-radius: 4px;
   overflow: hidden;
