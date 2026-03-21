@@ -1,4 +1,4 @@
-import { renderCardBlock } from './renderer.js?v=7';
+import { renderCardBlock } from './renderer.js';
 
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
