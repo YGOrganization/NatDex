@@ -1,8 +1,19 @@
-import { renderCardGrid } from './renderer.js';
+// main.js
+import { renderCardGrid } from './renderer.js'; 
+// IMPORTANT: no ?v=7, no VirtualScroller import
 
 async function loadData() {
-  const response = await fetch('./data.json');
-  return await response.json();
+  try {
+    const response = await fetch('./data.json'); // no version number
+    if (!response.ok) {
+      console.error('Failed to load card data:', response.status, response.statusText);
+      return [];
+    }
+    return await response.json();
+  } catch (err) {
+    console.error('Error loading data.json:', err);
+    return [];
+  }
 }
 
 function isAdminMode() {
@@ -15,6 +26,6 @@ function isAdminMode() {
   const container = document.getElementById('card-grid');
   const admin = isAdminMode();
 
-  // Render all trios directly into the page
+  // Render everything directly into the page
   renderCardGrid(data, container, admin);
 })();
