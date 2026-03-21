@@ -1,37 +1,36 @@
 import { COLOR_RULES } from './colorRules.js';
-import { RUSH_NAMES } from './rushNames.js';
 
-// Encode for Yugipedia FilePath
-function encodeForWiki(name) {
-  return encodeURIComponent(name.replace(/ /g, "_"));
+/**
+ * Normalize a color name to a safe key:
+ * - lowercase
+ * - spaces → hyphens
+ * - remove invalid characters
+ */
+function normalizeColorKey(raw) {
+  return String(raw || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '');
 }
 
+/**
+ * Resolve the correct image URL for a card entry.
+ */
 export function resolveImage(entry) {
-  const color = entry.color;
-  const rules = COLOR_RULES[color];
+  const colorKey = normalizeColorKey(entry.color);
+  const colorRule = COLOR_RULES[colorKey];
 
-  // Case 1: White or Yellow → auto image
-  if (!rules.manualImageOverride) {
-    if (color === "White") {
-      // TCG/OCG auto image
-      const encoded = encodeForWiki(entry.name);
-      return `https://yugipedia.com/wiki/Special:FilePath/${encoded}.png`;
-    }
-
-    if (color === "Yellow") {
-      // Rush Duel auto image
-      const rushName = RUSH_NAMES[entry.name] || `${entry.name} (Rush Duel)`;
-      const encoded = encodeForWiki(rushName);
-      return `https://yugipedia.com/wiki/Special:FilePath/${encoded}.png`;
-    }
+  // If no color rule exists, treat as no image
+  if (!colorRule) {
+    return null;
   }
 
-  // Case 2: Manual override colors
-  // If admin provided a URL, use it
-  if (entry.image && entry.image.trim() !== "") {
-    return entry.image.trim();
+  // If this color requires manual images, return null
+  if (colorRule.manualImageOverride) {
+    return null;
   }
 
-  // Case 3: No image provided → empty cell
-  return null;
+  // Otherwise use the entry's image field
+  return entry.image || null;
 }
