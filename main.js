@@ -33,4 +33,4 @@ async function loadData() {
 }
 
 // Start the app
-loadData();
+window.addEventListener("DOMContentLoaded", loadData);
