@@ -5,6 +5,16 @@
   padding: 0;
 }
 
+#top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px; /* we can adjust later */
+  background-color: #255b72;
+  z-index: 1000; /* keeps it above the grid */
+}
+
 body {
   background: #111;
   color: #fff;
