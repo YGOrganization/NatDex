@@ -22,7 +22,7 @@ async function loadData() {
     await new VirtualScroller(container, data, isAdmin);
 
     // Always start at the top
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
   } catch (err) {
     console.error('Failed to load data.json:', err);
     const container = document.getElementById('card-grid');
