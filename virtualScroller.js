@@ -27,11 +27,13 @@ export class VirtualScroller {
       container.innerHTML = '';
       container.appendChild(this.viewport);
 
+      // Scroll/render scheduling
+      this.renderQueued = false;
       this.onScroll = this.onScroll.bind(this);
       window.addEventListener('scroll', this.onScroll);
 
-      this.calculateColumns();
-      // window.addEventListener('resize', () => this.calculateColumns());
+      this.calculateColumns = this.calculateColumns.bind(this);
+      window.addEventListener('resize', this.calculateColumns);
 
       // Let layout settle
       await new Promise(r =>
@@ -40,7 +42,6 @@ export class VirtualScroller {
 
       await this.measureItemHeight();
 
-      // Initial render
       this.render();
       return this;
     })();
@@ -56,7 +57,6 @@ export class VirtualScroller {
         }
 
         if (!sample) {
-          // Fallback: keep default itemHeight
           return resolve();
         }
 
@@ -101,23 +101,30 @@ export class VirtualScroller {
     }
   }
 
-   onScroll() {
-    this.render();
+  onScroll() {
+    if (this.renderQueued) return;
+    this.renderQueued = true;
+    requestAnimationFrame(() => {
+      this.renderQueued = false;
+      this.render();
+    });
   }
 
   render() {
     const rowHeight = this.itemHeight;
-    if (!rowHeight || rowHeight <= 0) {
-      return;
-    }
+    if (!rowHeight || rowHeight <= 0) return;
 
-    const scrollTop = window.scrollY;
+    // Scroll relative to the viewport, not the whole window
+    const viewportTop =
+      this.viewport.getBoundingClientRect().top + window.scrollY;
+    const rawScrollTop = window.scrollY - viewportTop;
+    const scrollTop = Math.max(0, rawScrollTop);
+
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
 
-    // Compute rows based on a stable rowHeight
     const startRow = Math.max(
       0,
       Math.floor(scrollTop / rowHeight) - this.buffer
@@ -132,16 +139,12 @@ export class VirtualScroller {
 
     const visibleItems = this.data.slice(startIndex, endIndex);
 
-    // Rebuild visible grid
     this.grid.innerHTML = '';
     for (const entry of visibleItems) {
       const block = renderCardBlock(entry, this.isAdmin);
-      if (block) {
-        this.grid.appendChild(block);
-      }
+      if (block) this.grid.appendChild(block);
     }
 
-    // Set spacer heights; these must be consistent with rowHeight
     const topHeight = startRow * rowHeight;
     const bottomHeight = (totalRows - endRow) * rowHeight;
 
