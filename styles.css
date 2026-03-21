@@ -163,11 +163,13 @@ body {
 .card-block {
   width: 100%;
 }
+/* Ensure the grid fills the page */
 #card-grid {
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
 }
+
 /* Ensure the viewport grid expands fully */
 .vs-viewport {
   width: 100%;
@@ -180,3 +182,4 @@ body {
 .card-block {
   width: 100%;
 }
+
