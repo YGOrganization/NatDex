@@ -1,19 +1,9 @@
-// main.js
-import { renderCardGrid } from './renderer.js'; 
-// IMPORTANT: no ?v=7, no VirtualScroller import
+import { VirtualScroller } from './virtualScroller.js';
+import { renderCardGrid } from './renderer.js';
 
 async function loadData() {
-  try {
-    const response = await fetch('./data.json'); // no version number
-    if (!response.ok) {
-      console.error('Failed to load card data:', response.status, response.statusText);
-      return [];
-    }
-    return await response.json();
-  } catch (err) {
-    console.error('Error loading data.json:', err);
-    return [];
-  }
+  const response = await fetch('./data.json');
+  return await response.json();
 }
 
 function isAdminMode() {
@@ -26,6 +16,5 @@ function isAdminMode() {
   const container = document.getElementById('card-grid');
   const admin = isAdminMode();
 
-  // Render everything directly into the page
-  renderCardGrid(data, container, admin);
+  new VirtualScroller(container, data, admin);
 })();
