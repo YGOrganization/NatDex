@@ -1,8 +1,8 @@
 import { renderCardBlock } from './renderer.js';
 
 /**
- * Clean, stable VirtualScroller
- * - Accurate height measurement (async, after layout)
+ * Clean, stable VirtualScroller (async constructor version)
+ * - Accurate height measurement (after layout)
  * - No flicker
  * - No DOM nuking
  * - Stable grid
@@ -10,43 +10,46 @@ import { renderCardBlock } from './renderer.js';
  */
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
-    this.container = container;
-    this.data = data;
-    this.isAdmin = isAdmin;
+    // Return an async IIFE so the caller gets a fully initialized instance
+    return (async () => {
+      this.container = container;
+      this.data = data;
+      this.isAdmin = isAdmin;
 
-    this.columns = 10;
-    this.buffer = 5;
-    this.itemHeight = 250; // temporary fallback until measured
+      this.columns = 10;
+      this.buffer = 5;
+      this.itemHeight = 250; // fallback until measured
 
-    // Create viewport
-    this.viewport = document.createElement('div');
-    this.viewport.className = 'vs-viewport';
+      // Create viewport
+      this.viewport = document.createElement('div');
+      this.viewport.className = 'vs-viewport';
 
-    // Create spacers
-    this.spacerTop = document.createElement('div');
-    this.spacerBottom = document.createElement('div');
+      // Create spacers
+      this.spacerTop = document.createElement('div');
+      this.spacerBottom = document.createElement('div');
 
-    this.viewport.appendChild(this.spacerTop);
-    this.viewport.appendChild(this.spacerBottom);
+      this.viewport.appendChild(this.spacerTop);
+      this.viewport.appendChild(this.spacerBottom);
 
-    container.innerHTML = '';
-    container.appendChild(this.viewport);
+      container.innerHTML = '';
+      container.appendChild(this.viewport);
 
-    // Bind scroll handler
-    this.onScroll = this.onScroll.bind(this);
-    window.addEventListener('scroll', this.onScroll);
+      // Bind scroll handler
+      this.onScroll = this.onScroll.bind(this);
+      window.addEventListener('scroll', this.onScroll);
 
-    // Recalculate columns on resize
-    this.calculateColumns();
-    window.addEventListener('resize', () => this.calculateColumns());
+      // Recalculate columns on resize
+      this.calculateColumns();
+      window.addEventListener('resize', () => this.calculateColumns());
 
-    // Measure height, then render
-    this.initialize();
-  }
+      // Measure height AFTER layout stabilizes
+      await this.measureItemHeight();
 
-  async initialize() {
-    await this.measureItemHeight();
-    this.render();
+      // Now that height is correct, render for the first time
+      this.render();
+
+      return this;
+    })();
   }
 
   /**
@@ -83,7 +86,10 @@ export class VirtualScroller {
     else if (width < 1600) this.columns = 8;
     else this.columns = 10;
 
-    this.render();
+    // Only re-render if height is already measured
+    if (this.itemHeight > 0) {
+      this.render();
+    }
   }
 
   onScroll() {
