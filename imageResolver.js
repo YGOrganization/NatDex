@@ -26,10 +26,6 @@ export function resolveImage(entry) {
     return entry.image;
   }
 
-  // Auto-generate for WHITE cards using YGOPRODeck cropped art
-  if (colorKey === 'white') {
-    return `https://images.ygoprodeck.com/images/cards_cropped/${entry.id}.jpg`;
-  }
-
+  // TEMPORARY: disable auto-generation until Yugipedia CORS is fixed
   return null;
 }
