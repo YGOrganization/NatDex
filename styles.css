@@ -73,13 +73,14 @@ body {
   font-size: 13px;
   text-align: center;
   line-height: 1.2;
-  
-  /* NEW: lock the vertical size */
-  height: 4.8em;        /* roughly 4 lines of text */
-  overflow: hidden;     /* hide anything that doesn't fit */
-  display: -webkit-box; /* enable multi-line clamp behavior */
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4; /* allow up to 4 lines */
+
+  height: 4.8em;        /* fixed height */
+  overflow: hidden;
+
+  display: flex;        /* NEW: enables vertical centering */
+  align-items: center;  /* NEW: vertical centering */
+  justify-content: center; /* NEW: horizontal centering */
+  text-align: center;   /* keep text centered */
 }
 
 /* Colors */
