@@ -119,3 +119,8 @@ h1 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+.card-row-image {
+  display: flex !important;
+  min-height: 80px !important;
+}
+
