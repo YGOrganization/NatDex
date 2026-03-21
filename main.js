@@ -1,3 +1,5 @@
+console.log("main.js loaded");
+
 import { VirtualScroller } from './virtualScroller.js';
 
 // MVP: no admin login yet
