@@ -98,3 +98,18 @@ body {
 .color-tan        { --card-color: #fff2cc; }
 .color-red        { --card-color: #e6b8af; }
 .color-black      { --card-color: #434343; }
+
+/* Virtual scroller layout fixes */
+.vs-viewport {
+  width: 100%;
+  box-sizing: border-box;
+  /* important: NOT a grid */
+  display: block;
+}
+
+.vs-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0px, 1fr));
+  gap: 12px;
+}
