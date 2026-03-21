@@ -41,7 +41,7 @@ export class VirtualScroller {
 
       // Bind scroll handler
       this.onScroll = this.onScroll.bind(this);
-      window.addEventListener('scroll', this.onScroll);
+      this.viewport.addEventListener('scroll', this.onScroll);
 
       // Recalculate columns on resize
       this.calculateColumns();
@@ -134,8 +134,8 @@ await this.measureItemHeight();
     'itemHeight:', this.itemHeight
   );
 
-  const scrollTop = window.scrollY;
-  const viewportHeight = window.innerHeight;
+const scrollTop = this.viewport.scrollTop;
+const viewportHeight = this.viewport.clientHeight;
 
     const itemsPerRow = this.columns;
     const rowHeight = this.itemHeight || 1; // never 0
