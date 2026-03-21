@@ -92,6 +92,8 @@ await this.measureItemHeight();
           // Safety guard: never allow 0 or NaN
           this.itemHeight = (h && h > 0) ? h : 250;
 
+          console.log('[VS] measured sample height:', h, '→ itemHeight:', this.itemHeight);
+          
           this.grid.removeChild(sample);
           resolve();
         });
@@ -125,8 +127,15 @@ await this.measureItemHeight();
    * Render only visible items into the inner grid.
    */
   render() {
-    const scrollTop = window.scrollY;
-    const viewportHeight = window.innerHeight;
+  console.log('[VS] render()',
+    'scrollTop:', window.scrollY,
+    'viewportHeight:', window.innerHeight,
+    'columns:', this.columns,
+    'itemHeight:', this.itemHeight
+  );
+
+  const scrollTop = window.scrollY;
+  const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
     const rowHeight = this.itemHeight || 1; // never 0
