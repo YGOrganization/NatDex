@@ -61,7 +61,7 @@ body {
   display: grid;
   grid-template-rows: auto auto auto; /* ID, image, name */
   border: 3px ridge #ccc; /* Ridge frame, thinner than default */
-  background: #222;
+  background: var(--card-color);
   padding: 6px;
   border-radius: 4px;
   min-height: 180px; /* Ensures visual consistency */
