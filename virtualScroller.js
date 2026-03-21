@@ -28,7 +28,7 @@ export class VirtualScroller {
       container.appendChild(this.viewport);
 
       this.onScroll = this.onScroll.bind(this);
-      // window.addEventListener('scroll', this.onScroll);
+      window.addEventListener('scroll', this.onScroll);
 
       this.calculateColumns();
       // window.addEventListener('resize', () => this.calculateColumns());
