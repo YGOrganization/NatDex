@@ -92,7 +92,9 @@ export class VirtualScroller {
   }
 
   render() {
-    const scrollTop = window.scrollY;
+    // ⭐ Correct scroll origin
+    const scrollTop = Math.max(0, window.scrollY - this.container.offsetTop);
+
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
