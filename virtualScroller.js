@@ -10,7 +10,6 @@ export class VirtualScroller {
       this.columns = 10;
       this.buffer = 5;
       this.itemHeight = 250;
-      this.rowGap = 0;
 
       this.viewport = document.createElement('div');
       this.viewport.className = 'vs-viewport';
@@ -38,10 +37,6 @@ export class VirtualScroller {
 
       await this.measureItemHeight();
 
-      const styles = getComputedStyle(this.grid);
-      const gap = parseFloat(styles.rowGap || styles.gap || '0');
-      this.rowGap = Number.isFinite(gap) ? gap : 0;
-
       this.render();
       return this;
     })();
@@ -62,12 +57,23 @@ export class VirtualScroller {
 
         this.grid.appendChild(sample);
 
-        requestAnimationFrame(() => {
-          const h = sample.offsetHeight;
-          this.itemHeight = (h && h > 0) ? h : 250;
-          this.grid.removeChild(sample);
-          resolve();
-        });
+        const img = sample.querySelector('img');
+
+        const finalize = () => {
+          requestAnimationFrame(() => {
+            const h = sample.offsetHeight;
+            this.itemHeight = (h && h > 0) ? h : 250;
+            this.grid.removeChild(sample);
+            resolve();
+          });
+        };
+
+        if (img && !img.complete) {
+          img.onload = finalize;
+          img.onerror = finalize;
+        } else {
+          finalize();
+        }
       });
     });
   }
@@ -92,13 +98,11 @@ export class VirtualScroller {
   }
 
   render() {
-    // ⭐ Correct scroll origin
-    const scrollTop = Math.max(0, window.scrollY - this.container.offsetTop);
-
+    const scrollTop = window.scrollY;
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
-    const rowHeight = this.itemHeight + this.rowGap;
+    const rowHeight = this.itemHeight;
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
 
     const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - this.buffer);
