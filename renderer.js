@@ -19,7 +19,11 @@ export function renderCardBlock(entry, isAdmin = false) {
   const block = document.createElement('div');
   block.className = 'card-block';
 
-  // Apply background color to the whole block (optional)
+  // Add the color class (this was missing before)
+  // Example: color-green, color-blue, color-black, etc.
+  block.classList.add(`color-${entry.color}`);
+
+  // Also expose the hex color for CSS-based empty-image backgrounds
   block.style.setProperty('--card-color', colorRule.hex);
 
   // Row 1: ID
