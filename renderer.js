@@ -100,7 +100,7 @@ export function renderCardBlock(entry, isAdmin = false) {
 }
 
 /**
- * Render a list of entries into a container.
+ * Render a list of entries into a container (non-virtual fallback).
  */
 export function renderCardGrid(entries, container, isAdmin = false) {
   container.innerHTML = '';
