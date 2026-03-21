@@ -1,128 +1,93 @@
-/* Reset */
-* {
+/* Base layout */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 body {
-  background: #111;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  padding: 20px;
-}
-
-/* -------------------------------------------------------
-   MAIN GRID CONTAINER
-   ------------------------------------------------------- */
-#card-grid {
-  width: 100%;
-  max-width: 1920px;
-  margin: 0 auto;
-  padding: 20px 0;
-  box-sizing: border-box;
-}
-
-/* -------------------------------------------------------
-   VIRTUAL SCROLLER VIEWPORT
-   ------------------------------------------------------- */
-.vs-viewport {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 12px;
-  box-sizing: border-box;
-}
-
-/* -------------------------------------------------------
-   CARD BLOCK (3 rows: ID, image, name)
-   ------------------------------------------------------- */
-.card-block {
-  width: 100%;
-  background: #222;
-  border-radius: 6px;
-  padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-/* Row 1: ID */
+h1 {
+  margin: 16px;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* Card grid container */
+#card-grid {
+  flex: 1;
+  padding: 16px;
+}
+
+/* Card block layout */
+.card-block {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #111;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Rows */
+.card-row {
+  padding: 4px 6px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* ID row */
 .card-row-id {
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
+  font-weight: 600;
+  text-align: left;
 }
 
-/* Row 2: Image */
+/* Image row */
 .card-row-image {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  background: var(--card-color, #444);
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  border-radius: 4px;
+  background-color: var(--card-color, #333);
 }
 
-.card-row-image img.card-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Row 2 (no image) */
 .card-row-empty-image {
-  background: var(--card-color, #444);
+  /* keeps height even when no image */
 }
 
-/* Row 3: Name */
+/* Name row */
 .card-row-name {
-  font-size: 13px;
-  text-align: center;
-  line-height: 1.2;
+  text-align: left;
 }
 
-/* -------------------------------------------------------
-   COLOR CLASSES (normalized)
-   ------------------------------------------------------- */
-.color-white      { --card-color: #ffffff; }
-.color-yellow     { --card-color: #ffff00; }
-.color-green      { --card-color: #b6d7a8; }
-.color-blue       { --card-color: #9fc5e8; }
-.color-orange     { --card-color: #ff9900; }
-.color-magenta    { --card-color: #ff00ff; }
-.color-dark-grey  { --card-color: #999999; }
-.color-light-grey { --card-color: #d9d9d9; }
-.color-tan        { --card-color: #fff2cc; }
-.color-red        { --card-color: #e6b8af; }
-.color-black      { --card-color: #434343; }
-
-/* Virtual scroller layout fixes */
-.vs-viewport {
-  width: 100%;
-  box-sizing: border-box;
-  /* important: NOT a grid */
+/* Image */
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
   display: block;
 }
 
-.vs-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0px, 1fr));
-  gap: 12px;
-}
 /* Apply card color to all rows */
 .card-row-id,
 .card-row-name {
-  background-color: var(--card-color);
+  background-color: var(--card-color, #333);
+  color: #000;
 }
-.card-row-id,
-.card-row-name {
-  color: #000; /* or #fff depending on your palette */
-}
-/* VirtualScroller layout fixes */
+
+/* VirtualScroller layout */
 .vs-viewport {
   width: 100%;
   display: block; /* critical: NOT a grid */
@@ -136,3 +101,21 @@ body {
   gap: 12px;
 }
 
+/* Optional: responsive tweaks */
+@media (max-width: 1200px) {
+  .vs-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .vs-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .vs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
