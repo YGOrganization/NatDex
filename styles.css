@@ -142,3 +142,8 @@ body {
   background: #000000;
   color: white; /* override text color for black cards */
 }
+.vs-viewport {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
+}
