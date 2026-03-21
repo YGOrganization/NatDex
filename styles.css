@@ -5,46 +5,24 @@
   padding: 0;
 }
 
-/* Body must NOT scroll */
-html, body {
-  height: 100%;
-  overflow: hidden;
+body {
   background: #111;
   color: #fff;
   font-family: Arial, sans-serif;
+  padding: 20px;
 }
 
-/* -------------------------------------------------------
-   HEADER
-   ------------------------------------------------------- */
-#top-bar {
-  height: 60px;
-  padding: 10px 20px;
-  background: #222;
-  border-bottom: 1px solid #333;
-  display: flex;
-  align-items: center;
+/* Main container */
+#card-grid {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 20px 0;
 }
 
-/* -------------------------------------------------------
-   SCROLLER CONTAINER (fills remaining space)
-   ------------------------------------------------------- */
-#scroller-container {
-  position: absolute;
-  top: 60px;      /* below header */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-/* -------------------------------------------------------
-   VIRTUAL SCROLLER VIEWPORT
-   ------------------------------------------------------- */
+/* VirtualScroller viewport (window scroll version) */
 .vs-viewport {
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
   display: block;
 }
 
@@ -54,12 +32,9 @@ html, body {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 12px;
-  padding: 20px;
 }
 
-/* -------------------------------------------------------
-   CARD BLOCK
-   ------------------------------------------------------- */
+/* Card block */
 .card-block {
   width: 100%;
   background: #222;
