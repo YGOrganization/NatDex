@@ -1,5 +1,5 @@
 import { resolveImage } from './resolveImage.js';
-import { getColorForCard } from './colourrule.js';
+import { getColorForCard } from './colourRules.js';
 
 export function renderCardBlock(entry, isAdmin = false) {
   const block = document.createElement('div');
