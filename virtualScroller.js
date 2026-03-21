@@ -1,4 +1,4 @@
-import { renderCardBlock } from './renderer.js';
+import { renderCardBlock } from './renderer.js?v=7';
 
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
@@ -33,7 +33,10 @@ export class VirtualScroller {
       this.calculateColumns();
       window.addEventListener('resize', () => this.calculateColumns());
 
+      // Wait for layout to settle
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // Measure height AFTER image loads
       await this.measureItemHeight();
 
       this.render();
@@ -52,14 +55,28 @@ export class VirtualScroller {
 
         if (!sample) return resolve();
 
+        // Ensure correct column count before measuring
+        this.grid.style.setProperty('--vs-columns', this.columns);
+
         this.grid.appendChild(sample);
 
-        requestAnimationFrame(() => {
-          const h = sample.offsetHeight;
-          this.itemHeight = (h && h > 0) ? h : 250;
-          this.grid.removeChild(sample);
-          resolve();
-        });
+        const img = sample.querySelector('img');
+
+        const finalize = () => {
+          requestAnimationFrame(() => {
+            const h = sample.offsetHeight;
+            this.itemHeight = (h && h > 0) ? h : 250;
+            this.grid.removeChild(sample);
+            resolve();
+          });
+        };
+
+        if (img && !img.complete) {
+          img.onload = finalize;
+          img.onerror = finalize;
+        } else {
+          finalize();
+        }
       });
     });
   }
@@ -74,6 +91,7 @@ export class VirtualScroller {
     else if (width < 1600) this.columns = 8;
     else this.columns = 10;
 
+    // Sync CSS grid with JS
     this.grid.style.setProperty('--vs-columns', this.columns);
 
     if (this.itemHeight > 0) this.render();
