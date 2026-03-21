@@ -30,12 +30,22 @@ export class VirtualScroller {
       this.onScroll = this.onScroll.bind(this);
       window.addEventListener('scroll', this.onScroll);
 
-      this.calculateColumns();
-      window.addEventListener('resize', () => this.calculateColumns());
+      // ❌ Removed: early calculateColumns() call
+      // It was running before layout + before itemHeight was known
 
+      // Wait 2 frames for layout to settle
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // Measure card height
       await this.measureItemHeight();
 
+      // Now that width + height are known, calculate columns correctly
+      this.calculateColumns();
+
+      // Recalculate columns on resize
+      window.addEventListener('resize', () => this.calculateColumns());
+
+      // Initial render
       this.render();
       return this;
     })();
