@@ -24,17 +24,6 @@ body {
 }
 
 /* -------------------------------------------------------
-   VIRTUAL SCROLLER VIEWPORT
-   ------------------------------------------------------- */
-.vs-viewport {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 12px;
-  box-sizing: border-box;
-}
-
-/* -------------------------------------------------------
    CARD BLOCK (3 rows: ID, image, name)
    ------------------------------------------------------- */
 .card-block {
