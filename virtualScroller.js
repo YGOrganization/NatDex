@@ -47,8 +47,14 @@ export class VirtualScroller {
       this.calculateColumns();
       window.addEventListener('resize', () => this.calculateColumns());
 
-      // Measure height AFTER layout stabilizes
-      await this.measureItemHeight();
+// Wait 2 frames for CSS + layout to fully apply
+await new Promise(resolve => requestAnimationFrame(() => {
+  requestAnimationFrame(resolve);
+}));
+
+// Now measure height
+await this.measureItemHeight();
+
 
       // Initial render
       this.render();
