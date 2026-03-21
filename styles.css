@@ -121,3 +121,24 @@ body {
 #card-grid > .card-block {
   align-self: start;
 }
+#card-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 12px;
+}
+.card-block {
+  padding: 8px;
+  border-radius: 6px;
+  color: black; /* default text color */
+}
+
+.color-white { background: #ffffff; }
+.color-yellow { background: #fff3b0; }
+.color-green { background: #d4f8d4; }
+.color-blue { background: #d4e4ff; }
+.color-red { background: #ffd4d4; }
+.color-purple { background: #f0d4ff; }
+.color-black { 
+  background: #000000;
+  color: white; /* override text color for black cards */
+}
