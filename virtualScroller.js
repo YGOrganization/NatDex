@@ -1,14 +1,16 @@
 import { renderCardBlock } from './renderer.js';
 
 /**
- * Clean, stable VirtualScroller (async constructor version)
- * - Cards live in an inner grid (.vs-grid)
- * - Spacers are outside the grid, so they don't occupy columns
- * - Height is measured from the first valid card
+ * Production‑ready VirtualScroller for NatDex
+ * ----------------------------------------------------
+ * - Uses an inner grid so spacers never occupy columns
+ * - Measures item height safely (never 0 or NaN)
+ * - Prevents infinite scroll loops
+ * - Handles resize + dynamic columns
+ * - Only re-renders when needed
  */
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
-    // Return an async IIFE so the caller gets a fully initialized instance
     return (async () => {
       this.container = container;
       this.data = data;
@@ -16,17 +18,17 @@ export class VirtualScroller {
 
       this.columns = 10;
       this.buffer = 5;
-      this.itemHeight = 250; // fallback until measured
+      this.itemHeight = 250; // safe fallback
 
       // Outer viewport (NOT a grid)
       this.viewport = document.createElement('div');
       this.viewport.className = 'vs-viewport';
 
-      // Spacers live outside the grid
+      // Spacers (above and below the grid)
       this.spacerTop = document.createElement('div');
       this.spacerBottom = document.createElement('div');
 
-      // Inner grid that actually holds cards
+      // Inner grid that holds actual cards
       this.grid = document.createElement('div');
       this.grid.className = 'vs-grid';
 
@@ -56,12 +58,13 @@ export class VirtualScroller {
   }
 
   /**
-   * Find the first valid entry and measure its rendered height.
+   * Safely measure the height of a card.
+   * Uses a two‑frame layout pass to ensure width is known.
    */
-  measureItemHeight() {
+  async measureItemHeight() {
     return new Promise(resolve => {
       requestAnimationFrame(() => {
-        // Find first entry that produces a non-null block
+        // Find first valid entry
         let sample = null;
         for (const entry of this.data) {
           sample = renderCardBlock(entry, this.isAdmin);
@@ -69,17 +72,20 @@ export class VirtualScroller {
         }
 
         if (!sample) {
-          // Fallback: no valid entries, keep default height
           resolve();
           return;
         }
 
-        // Insert into grid so it gets real width
+        // Insert sample into grid so it gets real width
         this.grid.appendChild(sample);
 
-        // Let browser compute layout
+        // Wait one more frame for layout to settle
         requestAnimationFrame(() => {
-          this.itemHeight = sample.offsetHeight || this.itemHeight;
+          const h = sample.offsetHeight;
+
+          // Safety guard: never allow 0 or NaN
+          this.itemHeight = (h && h > 0) ? h : 250;
+
           this.grid.removeChild(sample);
           resolve();
         });
@@ -88,7 +94,7 @@ export class VirtualScroller {
   }
 
   /**
-   * Determine number of columns based on container width
+   * Determine number of columns based on container width.
    */
   calculateColumns() {
     const width = this.container.clientWidth;
@@ -117,7 +123,7 @@ export class VirtualScroller {
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
-    const rowHeight = this.itemHeight || 1; // avoid division by zero
+    const rowHeight = this.itemHeight || 1; // never 0
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
 
     const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - this.buffer);
