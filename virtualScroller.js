@@ -49,15 +49,18 @@ export class VirtualScroller {
   /**
    * Measure the real height of a card-block
    */
-  measureItemHeight() {
-    const sample = renderCardBlock(this.data[0], this.isAdmin);
-    sample.style.visibility = 'hidden';
-    sample.style.position = 'absolute';
-    document.body.appendChild(sample);
+measureItemHeight() {
+  const sample = renderCardBlock(this.data[0], this.isAdmin);
 
-    this.itemHeight = sample.offsetHeight;
-    document.body.removeChild(sample);
-  }
+  // Insert into viewport so it gets real grid width
+  this.viewport.insertBefore(sample, this.spacerBottom);
+
+  this.itemHeight = sample.offsetHeight;
+
+  // Remove it after measuring
+  this.viewport.removeChild(sample);
+}
+
 
   /**
    * Determine number of columns based on container width
