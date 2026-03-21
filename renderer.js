@@ -16,27 +16,22 @@ function normalizeColorKey(raw) {
 }
 
 /**
- * Render a single card entry as a 3-row block:
+ * Create a standard 3-row card block:
  * Row 1: ID
  * Row 2: Image (or empty colored cell)
  * Row 3: Name
  */
-export function renderCardBlock(entry, isAdmin = false) {
-  const colorKey = normalizeColorKey(entry.color);
-  const colorRule = COLOR_RULES[colorKey];
-
-  // Container for the 3-row block
+function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
   const block = document.createElement('div');
   block.className = 'card-block';
 
-  // Add normalized color class
   if (colorKey) {
     block.classList.add(`color-${colorKey}`);
   }
 
-  // Apply hex color if known, otherwise fallback
-  const hex = colorRule?.hex || '#444';
-  block.style.setProperty('--card-color', hex);
+  if (hex) {
+    block.style.setProperty('--card-color', hex);
+  }
 
   // Row 1: ID
   const idRow = document.createElement('div');
@@ -44,17 +39,15 @@ export function renderCardBlock(entry, isAdmin = false) {
   idRow.textContent = entry.id;
   block.appendChild(idRow);
 
-  // Row 2: Image (or empty colored cell)
+  // Row 2: Image (or empty)
   const imageRow = document.createElement('div');
   imageRow.className = 'card-row card-row-image';
-
-  const imageUrl = resolveImage(entry);
 
   if (imageUrl) {
     const img = document.createElement('img');
     img.className = 'card-image';
     img.src = imageUrl;
-    img.alt = entry.name;
+    img.alt = entry.name || '';
     imageRow.appendChild(img);
   } else {
     imageRow.classList.add('card-row-empty-image');
@@ -65,10 +58,45 @@ export function renderCardBlock(entry, isAdmin = false) {
   // Row 3: Name
   const nameRow = document.createElement('div');
   nameRow.className = 'card-row card-row-name';
-  nameRow.textContent = entry.name;
+  nameRow.textContent = showName ? (entry.name || '') : '';
   block.appendChild(nameRow);
 
   return block;
+}
+
+/**
+ * Render a single card entry as a 3-row block.
+ */
+export function renderCardBlock(entry, isAdmin = false) {
+  // Guard against completely invalid entries
+  if (!entry || !entry.id) {
+    return null;
+  }
+
+  const colorKey = normalizeColorKey(entry.color);
+  const colorRule = COLOR_RULES[colorKey];
+
+  // Admin-only handling: show placeholder in public mode
+  if (colorRule?.adminOnly && !isAdmin) {
+    const tanKey = 'tan';
+    const tanRule = COLOR_RULES[tanKey];
+    const hex = tanRule?.hex || '#fff2cc';
+
+    // Placeholder: ID only, no name, no image, tan color
+    return buildCardBlock(
+      entry,
+      tanKey,
+      hex,
+      null,
+      false // hide name
+    );
+  }
+
+  // Normal card rendering
+  const hex = colorRule?.hex || '#444';
+  const imageUrl = resolveImage(entry);
+
+  return buildCardBlock(entry, colorKey, hex, imageUrl, true);
 }
 
 /**
