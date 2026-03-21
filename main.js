@@ -13,7 +13,12 @@ async function loadData() {
     const data = await response.json();
     const container = document.getElementById('card-grid');
 
-    // Initialize virtual scroller (async constructor)
+    //  Wait for DOM + CSS + layout to fully settle
+    await new Promise(resolve => requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    }));
+
+    //  Now initialize the virtual scroller
     await new VirtualScroller(container, data, isAdmin);
 
     // Always start at the top
