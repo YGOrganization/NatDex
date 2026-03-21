@@ -68,11 +68,6 @@ body {
   object-fit: cover;
   display: block; /* prevents inline-image baseline expansion */
 }
-.card-row-image {
-  height: calc((100vw / var(--vs-columns)) * 4 / 3);
-  max-height: 250px; /* or whatever your measured itemHeight is */
-  overflow: hidden;
-}
 
 .card-row-name {
   font-size: 13px;
