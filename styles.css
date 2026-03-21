@@ -1,10 +1,46 @@
 /* ============================
+   GLOBAL RESET
+   ============================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+}
+
+/* ============================
+   VIRTUAL SCROLLER LAYOUT
+   ============================ */
+
+.vs-viewport {
+  width: 100%;
+  position: relative;
+}
+
+.vs-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 6px; /* restored screenshot spacing */
+  width: 100%;
+  padding: 12px;
+}
+
+/* ============================
    CARD BLOCK — RESTORED LAYOUT
    ============================ */
 
 .card-block {
-  border: 2px solid #000;
-  background: var(--card-color, #ccc);
+  border: 2px solid #000; /* screenshot border */
+  background: var(--card-color, #ccc); /* screenshot tint */
   border-radius: 4px;
   overflow: hidden;
   display: flex;
@@ -24,12 +60,13 @@
 .card-row-name {
   padding: 4px 6px;
   font-size: 12px;
-  text-align: center; /* centered like screenshot */
+  text-align: center; /* screenshot alignment */
+  font-weight: 600;
 }
 
 /* Image row */
 .card-row-image {
-  min-height: 110px; /* matches screenshot proportions */
+  min-height: 110px; /* screenshot proportions */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +79,76 @@
   display: block;
 }
 
-/* Grid spacing — matches screenshot */
-.vs-grid {
+/* Empty image placeholder */
+.card-row-empty-image {
+  min-height: 110px;
+}
+
+/* ============================
+   ADMIN CONTROLS (unchanged)
+   ============================ */
+
+.admin-controls {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
   gap: 6px;
+}
+
+.admin-button {
+  padding: 4px 8px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-button:hover {
+  background: #444;
+}
+
+/* ============================
+   SEARCH BAR (unchanged)
+   ============================ */
+
+#search-bar {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+/* ============================
+   BACK TO TOP BUTTON (unchanged)
+   ============================ */
+
+#back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 14px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+}
+
+#back-to-top:hover {
+  background: #555;
+}
+
+/* ============================
+   FOOTER (unchanged)
+   ============================ */
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-size: 14px;
 }
