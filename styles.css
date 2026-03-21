@@ -117,4 +117,22 @@ body {
 .card-row-name {
   background-color: var(--card-color);
   color: #000;
+}body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
+
+#card-grid {
+  padding: 0;
+  margin: 0;
+}
+
+.vs-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
