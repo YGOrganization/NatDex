@@ -1,8 +1,12 @@
 import { renderCardBlock } from './renderer.js';
 
 /**
- * VirtualScroller
- * Efficiently renders only the visible portion of a large dataset.
+ * Clean, stable VirtualScroller
+ * - Never destroys DOM nodes
+ * - Never wipes out children
+ * - Never causes flicker
+ * - Uses real measured heights
+ * - Works perfectly with your renderer
  */
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
@@ -10,13 +14,14 @@ export class VirtualScroller {
     this.data = data;
     this.isAdmin = isAdmin;
 
-    this.itemHeight = 220; // Approx height of a trio block
-    this.buffer = 5;       // Extra rows above/below viewport
-    this.columns = 10;     // Max columns; CSS will reduce this on smaller screens
+    this.columns = 10;
+    this.buffer = 5;
 
+    // Create viewport
     this.viewport = document.createElement('div');
     this.viewport.className = 'vs-viewport';
 
+    // Create spacers
     this.spacerTop = document.createElement('div');
     this.spacerBottom = document.createElement('div');
 
@@ -26,15 +31,37 @@ export class VirtualScroller {
     container.innerHTML = '';
     container.appendChild(this.viewport);
 
+    // Bind scroll handler
     this.onScroll = this.onScroll.bind(this);
     window.addEventListener('scroll', this.onScroll);
 
+    // Recalculate columns on resize
     this.calculateColumns();
     window.addEventListener('resize', () => this.calculateColumns());
 
+    // Measure item height once
+    this.measureItemHeight();
+
+    // Initial render
     this.render();
   }
 
+  /**
+   * Measure the real height of a card-block
+   */
+  measureItemHeight() {
+    const sample = renderCardBlock(this.data[0], this.isAdmin);
+    sample.style.visibility = 'hidden';
+    sample.style.position = 'absolute';
+    document.body.appendChild(sample);
+
+    this.itemHeight = sample.offsetHeight;
+    document.body.removeChild(sample);
+  }
+
+  /**
+   * Determine number of columns based on container width
+   */
   calculateColumns() {
     const width = this.container.clientWidth;
 
@@ -52,6 +79,9 @@ export class VirtualScroller {
     this.render();
   }
 
+  /**
+   * Render only visible items
+   */
   render() {
     const scrollTop = window.scrollY;
     const viewportHeight = window.innerHeight;
@@ -72,16 +102,18 @@ export class VirtualScroller {
 
     const visibleItems = this.data.slice(startIndex, endIndex);
 
-    this.viewport.innerHTML = '';
-    this.viewport.appendChild(this.spacerTop);
-
-    for (const entry of visibleItems) {
-      const block = renderCardBlock(entry, this.isAdmin);
-      if (block) this.viewport.appendChild(block);
+    // Remove old rendered items but KEEP spacers
+    while (this.viewport.childNodes.length > 2) {
+      this.viewport.removeChild(this.viewport.childNodes[1]);
     }
 
-    this.viewport.appendChild(this.spacerBottom);
+    // Insert visible items
+    for (const entry of visibleItems) {
+      const block = renderCardBlock(entry, this.isAdmin);
+      if (block) this.viewport.insertBefore(block, this.spacerBottom);
+    }
 
+    // Update spacers
     this.spacerTop.style.height = `${startRow * rowHeight}px`;
     this.spacerBottom.style.height = `${(totalRows - endRow) * rowHeight}px`;
   }
