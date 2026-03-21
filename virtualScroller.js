@@ -114,11 +114,14 @@ export class VirtualScroller {
     const rowHeight = this.itemHeight;
     if (!rowHeight || rowHeight <= 0) return;
 
-    // Scroll relative to the viewport, not the whole window
-    const viewportTop =
-      this.viewport.getBoundingClientRect().top + window.scrollY;
-    const rawScrollTop = window.scrollY - viewportTop;
-    const scrollTop = Math.max(0, rawScrollTop);
+// Compute scroll relative to the top of the virtual scroller
+const viewportTop =
+  this.viewport.getBoundingClientRect().top + window.scrollY;
+
+let scrollTop = window.scrollY - viewportTop;
+
+if (scrollTop < 0) scrollTop = 0;
+
 
     const viewportHeight = window.innerHeight;
 
