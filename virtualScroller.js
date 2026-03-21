@@ -1,4 +1,4 @@
-import { renderCardBlock } from './renderer.js?v=5';
+import { renderCardBlock } from './renderer.js?v=7';
 
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
@@ -28,7 +28,7 @@ export class VirtualScroller {
       container.appendChild(this.viewport);
 
       this.onScroll = this.onScroll.bind(this);
-      this.viewport.addEventListener('scroll', this.onScroll);
+      window.addEventListener('scroll', this.onScroll);
 
       this.calculateColumns();
       window.addEventListener('resize', () => this.calculateColumns());
@@ -82,8 +82,8 @@ export class VirtualScroller {
   }
 
   render() {
-    const scrollTop = this.viewport.scrollTop;
-    const viewportHeight = this.viewport.clientHeight;
+    const scrollTop = window.scrollY;
+    const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
     const rowHeight = this.itemHeight;
