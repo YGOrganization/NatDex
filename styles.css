@@ -1,76 +1,38 @@
-/* Base layout */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* ============================
+   CARD BLOCK — RESTORED LAYOUT
+   ============================ */
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #000;
-  color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
-h1 {
-  margin: 16px;
-  font-size: 20px;
-  color: #fff;
-}
-
-/* Card grid container */
-#card-grid {
-  flex: 1;
-  padding: 16px;
-}
-
-/* Card block layout */
 .card-block {
+  border: 2px solid #000;
+  background: var(--card-color, #ccc);
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #111;
-  background: #111;
   display: flex;
   flex-direction: column;
 }
 
-/* Rows */
-.card-row {
-  padding: 4px 6px;
-  font-size: 12px;
-  line-height: 1.3;
+/* All three rows share the card color */
+.card-row-id,
+.card-row-image,
+.card-row-name {
+  background: var(--card-color, #ccc);
+  color: #000;
 }
 
-/* ID row */
-.card-row-id {
-  font-weight: 600;
-  text-align: left;
+/* ID + Name rows */
+.card-row-id,
+.card-row-name {
+  padding: 4px 6px;
+  font-size: 12px;
+  text-align: center; /* centered like screenshot */
 }
 
 /* Image row */
 .card-row-image {
-  min-height: 80px;
+  min-height: 110px; /* matches screenshot proportions */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--card-color, #333);
-}
-
-.card-row-empty-image {
-  /* keeps height even when no image */
-}
-
-/* Name row */
-.card-row-name {
-  text-align: left;
 }
 
 /* Image */
@@ -80,58 +42,7 @@ h1 {
   display: block;
 }
 
-/* Apply card color to all rows */
-.card-row-id,
-.card-row-name {
-  background-color: var(--card-color, #333);
-  color: #000;
-}
-
-/* VirtualScroller layout */
-.vs-viewport {
-  width: 100%;
-  display: block; /* critical: NOT a grid */
-  box-sizing: border-box;
-}
-
+/* Grid spacing — matches screenshot */
 .vs-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 12px;
+  gap: 6px;
 }
-
-/* Optional: responsive tweaks */
-@media (max-width: 1200px) {
-  .vs-grid {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .vs-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .vs-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.card-row-image {
-  display: flex !important;
-  min-height: 80px !important;
-}
-.vs-viewport {
-  width: 100%;
-  min-height: 100%;
-  display: block;
-}
-
-#card-grid {
-  width: 100%;
-  min-height: 100%;
-  display: block;
-}
-
