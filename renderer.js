@@ -2,16 +2,29 @@ import { COLOR_RULES } from './colorRules.js';
 import { resolveImage } from './imageResolver.js';
 
 /**
+ * Normalize a color name to a safe key:
+ * - lowercase
+ * - spaces -> hyphens
+ */
+function normalizeColorKey(raw) {
+  return String(raw || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-');
+}
+
+/**
  * Render a single card entry as a 3-row block:
  * Row 1: ID
  * Row 2: Image (or empty colored cell)
  * Row 3: Name
  */
 export function renderCardBlock(entry, isAdmin = false) {
-  const colorRule = COLOR_RULES[entry.color];
+  const colorKey = normalizeColorKey(entry.color);
+  const colorRule = COLOR_RULES[colorKey];
 
   // If this is admin-only and user is not admin, skip rendering
-  if (colorRule.adminOnly && !isAdmin) {
+  if (colorRule && colorRule.adminOnly && !isAdmin) {
     return null;
   }
 
@@ -19,12 +32,15 @@ export function renderCardBlock(entry, isAdmin = false) {
   const block = document.createElement('div');
   block.className = 'card-block';
 
-  // Add the color class (this was missing before)
-  // Example: color-green, color-blue, color-black, etc.
-  block.classList.add(`color-${entry.color}`);
+  // Add the color class, e.g. color-dark-grey
+  if (colorKey) {
+    block.classList.add(`color-${colorKey}`);
+  }
 
-  // Also expose the hex color for CSS-based empty-image backgrounds
-  block.style.setProperty('--card-color', colorRule.hex);
+  // Expose the hex color for CSS-based empty-image backgrounds
+  if (colorRule && colorRule.hex) {
+    block.style.setProperty('--card-color', colorRule.hex);
+  }
 
   // Row 1: ID
   const idRow = document.createElement('div');
@@ -62,8 +78,7 @@ export function renderCardBlock(entry, isAdmin = false) {
 
 /**
  * Render a list of entries into a container.
- * This is a simple, non-virtualized renderer for MVP.
- * Later, virtualScroller.js will call renderCardBlock for visible items only.
+ * Simple, non-virtualized renderer (kept for completeness).
  */
 export function renderCardGrid(entries, container, isAdmin = false) {
   container.innerHTML = '';
