@@ -3,7 +3,7 @@ import { renderCardBlock } from './renderer.js';
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
     return (async () => {
-      this.container = container;          // This is now the scroll container
+      this.container = container;          // scroll container
       this.data = data;
       this.isAdmin = isAdmin;
 
@@ -11,7 +11,7 @@ export class VirtualScroller {
       this.buffer = 5;
       this.itemHeight = 250;
 
-      // Create viewport inside the scroll container
+      // Build viewport inside scroll container
       this.viewport = document.createElement('div');
       this.viewport.className = 'vs-viewport';
 
@@ -28,21 +28,27 @@ export class VirtualScroller {
       container.innerHTML = '';
       container.appendChild(this.viewport);
 
-      // Scroll/render scheduling (container scroll, not window)
+      // Bind + attach scroll handler (container scroll, not window)
       this.renderQueued = false;
       this.onScroll = this.onScroll.bind(this);
       this.container.addEventListener('scroll', this.onScroll);
 
+      // Bind resize handler
       this.calculateColumns = this.calculateColumns.bind(this);
       window.addEventListener('resize', this.calculateColumns);
+
+      // IMPORTANT: calculate columns BEFORE measuring height
+      this.calculateColumns();
 
       // Let layout settle
       await new Promise(r =>
         requestAnimationFrame(() => requestAnimationFrame(r))
       );
 
+      // Measure item height AFTER columns are set
       await this.measureItemHeight();
 
+      // Initial render
       this.render();
       return this;
     })();
@@ -61,6 +67,7 @@ export class VirtualScroller {
           return resolve();
         }
 
+        // Ensure correct column width before measuring
         this.grid.style.setProperty('--vs-columns', this.columns);
         this.grid.appendChild(sample);
 
@@ -97,55 +104,4 @@ export class VirtualScroller {
 
     this.grid.style.setProperty('--vs-columns', this.columns);
 
-    if (this.itemHeight > 0) {
-      this.render();
-    }
-  }
-
-  onScroll() {
-    if (this.renderQueued) return;
-    this.renderQueued = true;
-    requestAnimationFrame(() => {
-      this.renderQueued = false;
-      this.render();
-    });
-  }
-
-  render() {
-    const rowHeight = this.itemHeight;
-    if (!rowHeight || rowHeight <= 0) return;
-
-    // SCROLL POSITION NOW COMES FROM THE CONTAINER
-    const scrollTop = this.container.scrollTop;
-    const viewportHeight = this.container.clientHeight;
-
-    const itemsPerRow = this.columns;
-    const totalRows = Math.ceil(this.data.length / itemsPerRow);
-
-    const startRow = Math.max(
-      0,
-      Math.floor(scrollTop / rowHeight) - this.buffer
-    );
-    const endRow = Math.min(
-      totalRows,
-      Math.floor((scrollTop + viewportHeight) / rowHeight) + this.buffer
-    );
-
-    const startIndex = startRow * itemsPerRow;
-    const endIndex = Math.min(this.data.length, endRow * itemsPerRow);
-
-    const visibleItems = this.data.slice(startIndex, endIndex);
-
-    this.grid.innerHTML = '';
-    for (const entry of visibleItems) {
-      const block = renderCardBlock(entry, this.isAdmin);
-      if (block) this.grid.appendChild(block);
-    }
-
-    const topHeight = startRow * rowHeight;
-    const bottomHeight = (totalRows - endRow) * rowHeight;
-
-    this.spacerTop.style.height = `${topHeight}px`;
-    this.spacerBottom.style.height = `${bottomHeight}px`;
-  }
-}
+    // If height already known, re
