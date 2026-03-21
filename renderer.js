@@ -4,13 +4,15 @@ import { resolveImage } from './imageResolver.js';
 /**
  * Normalize a color name to a safe key:
  * - lowercase
- * - spaces -> hyphens
+ * - spaces → hyphens
+ * - remove invalid characters
  */
 function normalizeColorKey(raw) {
   return String(raw || '')
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-');
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '');
 }
 
 /**
@@ -23,24 +25,18 @@ export function renderCardBlock(entry, isAdmin = false) {
   const colorKey = normalizeColorKey(entry.color);
   const colorRule = COLOR_RULES[colorKey];
 
-  // If this is admin-only and user is not admin, skip rendering
-  if (colorRule && colorRule.adminOnly && !isAdmin) {
-    return null;
-  }
-
   // Container for the 3-row block
   const block = document.createElement('div');
   block.className = 'card-block';
 
-  // Add the color class, e.g. color-dark-grey
+  // Add normalized color class
   if (colorKey) {
     block.classList.add(`color-${colorKey}`);
   }
 
-  // Expose the hex color for CSS-based empty-image backgrounds
-  if (colorRule && colorRule.hex) {
-    block.style.setProperty('--card-color', colorRule.hex);
-  }
+  // Apply hex color if known, otherwise fallback
+  const hex = colorRule?.hex || '#444';
+  block.style.setProperty('--card-color', hex);
 
   // Row 1: ID
   const idRow = document.createElement('div');
@@ -61,7 +57,6 @@ export function renderCardBlock(entry, isAdmin = false) {
     img.alt = entry.name;
     imageRow.appendChild(img);
   } else {
-    // No image: leave empty, but color via CSS using --card-color
     imageRow.classList.add('card-row-empty-image');
   }
 
@@ -78,7 +73,6 @@ export function renderCardBlock(entry, isAdmin = false) {
 
 /**
  * Render a list of entries into a container.
- * Simple, non-virtualized renderer (kept for completeness).
  */
 export function renderCardGrid(entries, container, isAdmin = false) {
   container.innerHTML = '';
