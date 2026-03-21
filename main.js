@@ -29,13 +29,3 @@ async function loadData() {
 
 // Start the app
 loadData();
-// Wait for DOM + CSS + layout to fully settle
-await new Promise(resolve => requestAnimationFrame(() => {
-  requestAnimationFrame(resolve);
-}));
-
-// Now initialize the scroller
-await new VirtualScroller(container, data, isAdmin);
-
-// Ensure we start at the top
-window.scrollTo(0, 0);
