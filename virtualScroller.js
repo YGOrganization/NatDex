@@ -23,8 +23,6 @@ this.viewport = container; // use the scroll container as the viewport
       this.viewport.appendChild(this.grid);
       this.viewport.appendChild(this.spacerBottom);
 
-      container.appendChild(this.viewport);
-
       this.renderQueued = false;
       this.onScroll = this.onScroll.bind(this);
       this.container.addEventListener('scroll', this.onScroll);
