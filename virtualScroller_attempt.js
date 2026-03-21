@@ -74,6 +74,8 @@ export class VirtualScroller {
     else if (width < 1600) this.columns = 8;
     else this.columns = 10;
 
+    this.grid.style.setProperty('--vs-columns', this.columns);
+
     if (this.itemHeight > 0) this.render();
   }
 
