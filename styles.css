@@ -24,6 +24,25 @@ body {
 }
 
 /* -------------------------------------------------------
+   VIRTUAL SCROLLER VIEWPORT  (CORRECT VERSION)
+   ------------------------------------------------------- */
+.vs-viewport {
+  width: 100%;
+  display: block;        /* must NOT be a grid */
+  box-sizing: border-box;
+  overflow-y: auto;      /* scroll container */
+  height: 100vh;         /* fills screen */
+}
+
+/* Inner grid that holds the cards */
+.vs-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* -------------------------------------------------------
    CARD BLOCK (3 rows: ID, image, name)
    ------------------------------------------------------- */
 .card-block {
@@ -74,7 +93,7 @@ body {
 }
 
 /* -------------------------------------------------------
-   COLOR CLASSES (normalized)
+   COLOR CLASSES
    ------------------------------------------------------- */
 .color-white      { --card-color: #ffffff; }
 .color-yellow     { --card-color: #ffff00; }
@@ -88,43 +107,9 @@ body {
 .color-red        { --card-color: #e6b8af; }
 .color-black      { --card-color: #434343; }
 
-/* Virtual scroller layout fixes */
-.vs-viewport {
-  width: 100%;
-  box-sizing: border-box;
-  /* important: NOT a grid */
-  display: block;
-}
-
-.vs-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0px, 1fr));
-  gap: 12px;
-}
-/* Apply card color to all rows */
+/* Apply card color to ID + Name rows */
 .card-row-id,
 .card-row-name {
   background-color: var(--card-color);
-}
-.card-row-id,
-.card-row-name {
-  color: #000; /* or #fff depending on your palette */
-}
-/* VirtualScroller layout fixes */
-.vs-viewport {
-  width: 100%;
-  display: block; /* critical: NOT a grid */
-  box-sizing: border-box;
-}
-
-.vs-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 12px;
-}
-.vs-viewport {
-  overflow-y: auto;
-  height: 100vh;
+  color: #000;
 }
