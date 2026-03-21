@@ -1,65 +1,65 @@
 export const COLOR_RULES = {
-  "White": {
+  "white": {
     hex: "#ffffff",
     manualImageOverride: false,
     adminOnly: false,
     isReal: true
   },
-  "Yellow": {
+  "yellow": {
     hex: "#ffff00",
     manualImageOverride: false,
     adminOnly: false,
     isReal: true
   },
-  "Green": {
+  "green": {
     hex: "#b6d7a8",
     manualImageOverride: true,
     adminOnly: false,
     isReal: true
   },
-  "Blue": {
+  "blue": {
     hex: "#9fc5e8",
     manualImageOverride: true,
     adminOnly: false,
     isReal: false
   },
-  "Orange": {
+  "orange": {
     hex: "#ff9900",
     manualImageOverride: true,
     adminOnly: true,
     isReal: false
   },
-  "Magenta": {
+  "magenta": {
     hex: "#ff00ff",
     manualImageOverride: true,
     adminOnly: false,
     isReal: false
   },
-  "Dark Grey": {
+  "dark-grey": {
     hex: "#999999",
     manualImageOverride: true,
     adminOnly: false,
     isReal: false
   },
-  "Light Grey": {
+  "light-grey": {
     hex: "#d9d9d9",
     manualImageOverride: true,
     adminOnly: false,
     isReal: false
   },
-  "Tan": {
+  "tan": {
     hex: "#fff2cc",
     manualImageOverride: true,
     adminOnly: false,
     isReal: false
   },
-  "Red": {
+  "red": {
     hex: "#e6b8af",
     manualImageOverride: true,
     adminOnly: true,
     isReal: false
   },
-  "Black": {
+  "black": {
     hex: "#434343",
     manualImageOverride: true,
     adminOnly: false,
