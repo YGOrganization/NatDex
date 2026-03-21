@@ -98,3 +98,7 @@ body {
   background-color: var(--card-color);
   color: #000;
 }
+#scroll-container {
+  height: 100vh;
+  overflow-y: auto;
+}
