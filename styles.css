@@ -135,3 +135,7 @@ body {
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 12px;
 }
+.vs-viewport {
+  overflow-y: auto;
+  height: 100vh;
+}
