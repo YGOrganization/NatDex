@@ -1,4 +1,4 @@
-import { renderCardBlock } from './renderer.js';
+import { renderCardBlock } from './renderer.js?v=4';
 
 /**
  * Production‑ready VirtualScroller for NatDex
