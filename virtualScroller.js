@@ -101,9 +101,9 @@ export class VirtualScroller {
     }
   }
 
-  // onScroll() {
-  //  this.render();
-//  }
+   onScroll() {
+    this.render();
+  }
 
   render() {
     const rowHeight = this.itemHeight;
