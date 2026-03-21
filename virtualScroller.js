@@ -10,6 +10,7 @@ export class VirtualScroller {
       this.columns = 10;
       this.buffer = 5;
       this.itemHeight = 250;
+      this.rowGap = 0; // will be measured
 
       this.viewport = document.createElement('div');
       this.viewport.className = 'vs-viewport';
@@ -24,8 +25,8 @@ export class VirtualScroller {
       this.viewport.appendChild(this.grid);
       this.viewport.appendChild(this.spacerBottom);
 
-      container.innerHTML = '';
-      container.appendChild(this.viewport);
+      this.container.innerHTML = '';
+      this.container.appendChild(this.viewport);
 
       this.onScroll = this.onScroll.bind(this);
       window.addEventListener('scroll', this.onScroll);
@@ -36,8 +37,13 @@ export class VirtualScroller {
       // Wait for layout to settle
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // Measure height AFTER image loads
+      // Measure row height (including image load)
       await this.measureItemHeight();
+
+      // Measure vertical gap from CSS
+      const styles = getComputedStyle(this.grid);
+      const gap = parseFloat(styles.rowGap || styles.gap || '0');
+      this.rowGap = Number.isFinite(gap) ? gap : 0;
 
       this.render();
       return this;
@@ -106,7 +112,7 @@ export class VirtualScroller {
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
-    const rowHeight = this.itemHeight;
+    const rowHeight = this.itemHeight + this.rowGap; // include gap
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
 
     const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - this.buffer);
