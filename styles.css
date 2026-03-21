@@ -147,3 +147,7 @@ body {
   grid-template-columns: repeat(10, 1fr);
   gap: 12px;
 }
+.vs-viewport > div:first-child,
+.vs-viewport > div:last-child {
+  grid-column: 1 / -1;
+}
