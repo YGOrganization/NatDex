@@ -163,4 +163,20 @@ body {
 .card-block {
   width: 100%;
 }
+#card-grid {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+/* Ensure the viewport grid expands fully */
+.vs-viewport {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 12px;
+}
 
+/* Ensure each card-block fills its grid cell */
+.card-block {
+  width: 100%;
+}
