@@ -2,11 +2,11 @@ import { renderCardBlock } from './renderer.js';
 
 /**
  * Clean, stable VirtualScroller
- * - Never destroys DOM nodes
- * - Never wipes out children
- * - Never causes flicker
- * - Uses real measured heights
- * - Works perfectly with your renderer
+ * - Accurate height measurement (async, after layout)
+ * - No flicker
+ * - No DOM nuking
+ * - Stable grid
+ * - Full scroll range
  */
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
@@ -16,6 +16,7 @@ export class VirtualScroller {
 
     this.columns = 10;
     this.buffer = 5;
+    this.itemHeight = 250; // temporary fallback until measured
 
     // Create viewport
     this.viewport = document.createElement('div');
@@ -39,28 +40,35 @@ export class VirtualScroller {
     this.calculateColumns();
     window.addEventListener('resize', () => this.calculateColumns());
 
-    // Measure item height once
-    this.measureItemHeight();
+    // Measure height, then render
+    this.initialize();
+  }
 
-    // Initial render
+  async initialize() {
+    await this.measureItemHeight();
     this.render();
   }
 
   /**
-   * Measure the real height of a card-block
+   * Measure the real height of a card-block AFTER layout stabilizes.
    */
-measureItemHeight() {
-  const sample = renderCardBlock(this.data[0], this.isAdmin);
+  measureItemHeight() {
+    return new Promise(resolve => {
+      requestAnimationFrame(() => {
+        const sample = renderCardBlock(this.data[0], this.isAdmin);
 
-  // Insert into viewport so it gets real grid width
-  this.viewport.insertBefore(sample, this.spacerBottom);
+        // Insert into viewport so it gets real grid width
+        this.viewport.insertBefore(sample, this.spacerBottom);
 
-  this.itemHeight = sample.offsetHeight;
-
-  // Remove it after measuring
-  this.viewport.removeChild(sample);
-}
-
+        // Let browser compute layout
+        requestAnimationFrame(() => {
+          this.itemHeight = sample.offsetHeight;
+          this.viewport.removeChild(sample);
+          resolve();
+        });
+      });
+    });
+  }
 
   /**
    * Determine number of columns based on container width
