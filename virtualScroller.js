@@ -3,7 +3,7 @@ import { renderCardBlock } from './renderer.js';
 export class VirtualScroller {
   constructor(container, data, isAdmin = false) {
     return (async () => {
-      this.container = container;
+      this.container = container;          // This is now the scroll container
       this.data = data;
       this.isAdmin = isAdmin;
 
@@ -11,6 +11,7 @@ export class VirtualScroller {
       this.buffer = 5;
       this.itemHeight = 250;
 
+      // Create viewport inside the scroll container
       this.viewport = document.createElement('div');
       this.viewport.className = 'vs-viewport';
 
@@ -27,10 +28,10 @@ export class VirtualScroller {
       container.innerHTML = '';
       container.appendChild(this.viewport);
 
-      // Scroll/render scheduling
+      // Scroll/render scheduling (container scroll, not window)
       this.renderQueued = false;
       this.onScroll = this.onScroll.bind(this);
-      window.addEventListener('scroll', this.onScroll);
+      this.container.addEventListener('scroll', this.onScroll);
 
       this.calculateColumns = this.calculateColumns.bind(this);
       window.addEventListener('resize', this.calculateColumns);
@@ -114,16 +115,9 @@ export class VirtualScroller {
     const rowHeight = this.itemHeight;
     if (!rowHeight || rowHeight <= 0) return;
 
-// Compute scroll relative to the top of the virtual scroller
-const viewportTop =
-  this.viewport.getBoundingClientRect().top + window.scrollY;
-
-let scrollTop = window.scrollY - viewportTop;
-
-if (scrollTop < 0) scrollTop = 0;
-
-
-    const viewportHeight = window.innerHeight;
+    // SCROLL POSITION NOW COMES FROM THE CONTAINER
+    const scrollTop = this.container.scrollTop;
+    const viewportHeight = this.container.clientHeight;
 
     const itemsPerRow = this.columns;
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
