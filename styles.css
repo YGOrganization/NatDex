@@ -1,4 +1,4 @@
-/* Global reset */
+/* Reset */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,174 +12,89 @@ body {
   padding: 20px;
 }
 
-/* ============================
-   MASTER GRID (10 columns max)
-   ============================ */
-
-#card-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr); /* Max 10 trios per row */
-  gap: 12px;
-}
-
-/* Responsive: reduce columns as space shrinks */
-@media (max-width: 1600px) {
-  #card-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
-}
-
-@media (max-width: 1300px) {
-  #card-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-
-@media (max-width: 1000px) {
-  #card-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 700px) {
-  #card-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 500px) {
-  #card-grid {
-    grid-template-columns: repeat(1, 1fr); /* Mobile: 1 trio per row */
-  }
-}
-
-/* ============================
-   TRIO BLOCK (1 column × 3 rows)
-   ============================ */
-
-.card-block {
-  display: grid;
-  grid-template-rows: auto auto auto; /* ID, image, name */
-  border: 3px ridge #ccc; /* Ridge frame, thinner than default */
-  background: var(--card-color);
-  padding: 6px;
-  border-radius: 4px;
-  min-height: 180px; /* Ensures visual consistency */
-}
-
-/* ============================
-   ROW A: ID
-   ============================ */
-
-.card-row-id {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1rem;
-  padding: 4px 0;
-  background: rgba(255,255,255,0.05);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/* ============================
-   ROW B: IMAGE
-   ============================ */
-
-.card-row-image {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 140px; /* Standard image height */
-  overflow: hidden;
-}
-
-/* When no image exists */
-.card-row-empty-image {
-  background-color: var(--card-color);
-}
-
-/* Actual image */
-.card-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-/* ============================
-   ROW C: NAME
-   ============================ */
-
-.card-row-name {
-  text-align: center;
-  font-size: 0.9rem;
-  padding: 6px 4px;
-  line-height: 1.2;
-  word-break: keep-all; /* Never break mid-word */
-  overflow-wrap: break-word; /* Break between words if needed */
-}
-
-/* Ensure all trios in a row expand together */
-#card-grid > .card-block {
-  align-self: start;
-}
-#card-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 12px;
-}
-.card-block {
-  padding: 8px;
-  border-radius: 6px;
-  color: black; /* default text color */
-}
-
-.color-white { background: #ffffff; }
-.color-yellow { background: #fff3b0; }
-.color-green { background: #d4f8d4; }
-.color-blue { background: #d4e4ff; }
-.color-red { background: #ffd4d4; }
-.color-purple { background: #f0d4ff; }
-.color-black { 
-  background: #000000;
-  color: white; /* override text color for black cards */
-}
-.vs-viewport {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 12px;
-}
-.vs-viewport > div:first-child,
-.vs-viewport > div:last-child {
-  grid-column: 1 / -1;
-}
-.vs-viewport {
-  width: 100%;
-  box-sizing: border-box;
-}
-.vs-viewport {
-  display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
-  gap: 12px;
-}
-.card-block {
-  width: 100%;
-}
-/* Ensure the grid fills the page */
+/* -------------------------------------------------------
+   MAIN GRID CONTAINER
+   ------------------------------------------------------- */
 #card-grid {
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
+  padding: 20px 0;
+  box-sizing: border-box;
 }
 
-/* Ensure the viewport grid expands fully */
+/* -------------------------------------------------------
+   VIRTUAL SCROLLER VIEWPORT
+   ------------------------------------------------------- */
 .vs-viewport {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 12px;
+  box-sizing: border-box;
 }
 
-/* Ensure each card-block fills its grid cell */
+/* -------------------------------------------------------
+   CARD BLOCK (3 rows: ID, image, name)
+   ------------------------------------------------------- */
 .card-block {
   width: 100%;
+  background: #222;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
+/* Row 1: ID */
+.card-row-id {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Row 2: Image */
+.card-row-image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--card-color, #444);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.card-row-image img.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Row 2 (no image) */
+.card-row-empty-image {
+  background: var(--card-color, #444);
+}
+
+/* Row 3: Name */
+.card-row-name {
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* -------------------------------------------------------
+   COLOR CLASSES (normalized)
+   ------------------------------------------------------- */
+.color-white      { --card-color: #ffffff; }
+.color-yellow     { --card-color: #ffff00; }
+.color-green      { --card-color: #b6d7a8; }
+.color-blue       { --card-color: #9fc5e8; }
+.color-orange     { --card-color: #ff9900; }
+.color-magenta    { --card-color: #ff00ff; }
+.color-dark-grey  { --card-color: #999999; }
+.color-light-grey { --card-color: #d9d9d9; }
+.color-tan        { --card-color: #fff2cc; }
+.color-red        { --card-color: #e6b8af; }
+.color-black      { --card-color: #434343; }
