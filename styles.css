@@ -5,23 +5,6 @@
   padding: 0;
 }
 
-#top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background: #255b72;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-}
-.vs-content {
-  padding-top: 60px; /* same height as top bar */
-}
-
-
 body {
   background: #111;
   color: #fff;
