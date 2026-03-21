@@ -1,3 +1,5 @@
+console.log("virtualScroller.js loaded");
+
 import { renderCardBlock } from './renderer.js';
 
 export class VirtualScroller {
