@@ -123,4 +123,15 @@ h1 {
   display: flex !important;
   min-height: 80px !important;
 }
+.vs-viewport {
+  width: 100%;
+  min-height: 100%;
+  display: block;
+}
+
+#card-grid {
+  width: 100%;
+  min-height: 100%;
+  display: block;
+}
 
