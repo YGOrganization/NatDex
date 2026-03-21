@@ -33,10 +33,14 @@ export class VirtualScroller {
       this.calculateColumns();
       window.addEventListener('resize', () => this.calculateColumns());
 
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      // Let layout settle
+      await new Promise(r =>
+        requestAnimationFrame(() => requestAnimationFrame(r))
+      );
 
       await this.measureItemHeight();
 
+      // Initial render
       this.render();
       return this;
     })();
@@ -51,10 +55,12 @@ export class VirtualScroller {
           if (sample) break;
         }
 
-        if (!sample) return resolve();
+        if (!sample) {
+          // Fallback: keep default itemHeight
+          return resolve();
+        }
 
         this.grid.style.setProperty('--vs-columns', this.columns);
-
         this.grid.appendChild(sample);
 
         const img = sample.querySelector('img');
@@ -90,7 +96,9 @@ export class VirtualScroller {
 
     this.grid.style.setProperty('--vs-columns', this.columns);
 
-    if (this.itemHeight > 0) this.render();
+    if (this.itemHeight > 0) {
+      this.render();
+    }
   }
 
   onScroll() {
@@ -98,14 +106,22 @@ export class VirtualScroller {
   }
 
   render() {
+    const rowHeight = this.itemHeight;
+    if (!rowHeight || rowHeight <= 0) {
+      return;
+    }
+
     const scrollTop = window.scrollY;
     const viewportHeight = window.innerHeight;
 
     const itemsPerRow = this.columns;
-    const rowHeight = this.itemHeight;
     const totalRows = Math.ceil(this.data.length / itemsPerRow);
 
-    const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - this.buffer);
+    // Compute rows based on a stable rowHeight
+    const startRow = Math.max(
+      0,
+      Math.floor(scrollTop / rowHeight) - this.buffer
+    );
     const endRow = Math.min(
       totalRows,
       Math.floor((scrollTop + viewportHeight) / rowHeight) + this.buffer
@@ -116,13 +132,20 @@ export class VirtualScroller {
 
     const visibleItems = this.data.slice(startIndex, endIndex);
 
+    // Rebuild visible grid
     this.grid.innerHTML = '';
     for (const entry of visibleItems) {
       const block = renderCardBlock(entry, this.isAdmin);
-      if (block) this.grid.appendChild(block);
+      if (block) {
+        this.grid.appendChild(block);
+      }
     }
 
-    this.spacerTop.style.height = `${startRow * rowHeight}px`;
-    this.spacerBottom.style.height = `${(totalRows - endRow) * rowHeight}px`;
+    // Set spacer heights; these must be consistent with rowHeight
+    const topHeight = startRow * rowHeight;
+    const bottomHeight = (totalRows - endRow) * rowHeight;
+
+    this.spacerTop.style.height = `${topHeight}px`;
+    this.spacerBottom.style.height = `${bottomHeight}px`;
   }
 }
