@@ -28,10 +28,10 @@ export class VirtualScroller {
       container.appendChild(this.viewport);
 
       this.onScroll = this.onScroll.bind(this);
-      window.addEventListener('scroll', this.onScroll);
+      // window.addEventListener('scroll', this.onScroll);
 
       this.calculateColumns();
-      window.addEventListener('resize', () => this.calculateColumns());
+      // window.addEventListener('resize', () => this.calculateColumns());
 
       // Let layout settle
       await new Promise(r =>
@@ -101,9 +101,9 @@ export class VirtualScroller {
     }
   }
 
-  onScroll() {
-    this.render();
-  }
+  // onScroll() {
+  //  this.render();
+//  }
 
   render() {
     const rowHeight = this.itemHeight;
