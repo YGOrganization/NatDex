@@ -10,13 +10,12 @@ async function loadData() {
 
     const container = document.getElementById('card-grid');
 
-    // Activate virtual scrolling (async constructor)
     await new VirtualScroller(container, data, isAdmin);
+
+    // Force scroll to top on load
+    window.scrollTo(0, 0);
 
   } catch (err) {
     console.error("Failed to load data.json:", err);
   }
 }
-
-// Start the app
-loadData();
