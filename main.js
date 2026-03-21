@@ -1,4 +1,4 @@
-import { VirtualScroller } from './virtualScroller.js?v=4';
+import { VirtualScroller } from './virtualScroller_attempt.js';
 
 // MVP: no admin login yet
 const isAdmin = false;
