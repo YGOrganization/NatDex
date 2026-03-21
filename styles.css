@@ -113,3 +113,12 @@ body {
   grid-template-columns: repeat(10, minmax(0px, 1fr));
   gap: 12px;
 }
+/* Apply card color to all rows */
+.card-row-id,
+.card-row-name {
+  background-color: var(--card-color);
+}
+.card-row-id,
+.card-row-name {
+  color: #000; /* or #fff depending on your palette */
+}
