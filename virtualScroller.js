@@ -11,8 +11,7 @@ export class VirtualScroller {
       this.buffer = 5;
       this.itemHeight = 250;
 
-      this.viewport = document.createElement('div');
-      this.viewport.className = 'vs-viewport';
+this.viewport = container; // use the scroll container as the viewport
 
       this.spacerTop = document.createElement('div');
       this.spacerBottom = document.createElement('div');
@@ -24,7 +23,6 @@ export class VirtualScroller {
       this.viewport.appendChild(this.grid);
       this.viewport.appendChild(this.spacerBottom);
 
-      container.innerHTML = '';
       container.appendChild(this.viewport);
 
       this.renderQueued = false;
