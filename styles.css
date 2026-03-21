@@ -5,16 +5,6 @@
   padding: 0;
 }
 
-#top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px; /* we can adjust later */
-  background-color: #255b72;
-  z-index: 1000; /* keeps it above the grid */
-}
-
 body {
   background: #111;
   color: #fff;
@@ -28,7 +18,6 @@ body {
   max-width: 1920px;
   margin: 0 auto;
   padding: 20px;
-  margin-top: 35vh;
 }
 
 /* VirtualScroller viewport (window scroll version) */
@@ -113,7 +102,6 @@ body {
   color: #000;
 }
 #scroll-container {
-  height: calc(100vh - 60px);
+  height: 100vh;
   overflow-y: auto;
-  margin-top: 60px;
 }
