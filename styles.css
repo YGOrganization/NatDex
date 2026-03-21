@@ -113,7 +113,7 @@ body {
   color: #000;
 }
 #scroll-container {
-  height: 100vh;
+  height: calc(100vh - 60px);
   overflow-y: auto;
-  padding-top: 60px;
+  margin-top: 60px;
 }
