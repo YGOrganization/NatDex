@@ -11,7 +11,9 @@ body {
   font-family: Arial, sans-serif;
   padding: 0px;
 }
-
+.vs-content {
+  padding-top: 35vh;
+}
 /* Main container */
 #card-grid {
   width: 100%;
