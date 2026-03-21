@@ -11,7 +11,7 @@ async function loadData() {
     }
 
     const data = await response.json();
-    const container = document.getElementById('card-grid');
+    const container = document.getElementById('scroll-container');
 
     //  Wait for DOM + CSS + layout to fully settle
     await new Promise(resolve => requestAnimationFrame(() => {
