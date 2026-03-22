@@ -33,39 +33,58 @@ function patternToRegex(pattern) {
 }
 
 // ---------------------------------------------
-// Apply search filter (WITH container replacement)
+// Wait for FULL layout stability (Option C)
+// ---------------------------------------------
+async function waitForStableLayout() {
+  // DOM + CSS layout
+  await new Promise(resolve => requestAnimationFrame(() => {
+    requestAnimationFrame(resolve);
+  }));
+
+  // Images, fonts, final layout pass
+  if (document.readyState === "complete") {
+    return;
+  }
+
+  await new Promise(resolve => {
+    window.addEventListener("load", resolve, { once: true });
+  });
+}
+
+// ---------------------------------------------
+// Apply search filter (with container replacement + full layout wait)
 // ---------------------------------------------
 async function applySearchFilter(pattern) {
   if (!fullData.length) return;
 
   const regex = patternToRegex(pattern);
-console.log("fullData length before filter:", fullData.length);
+  console.log("fullData length before filter:", fullData.length);
+
   const filtered = fullData.filter(card =>
     regex.test(card.name)
   );
-console.log("filtered length:", filtered.length);
+  console.log("filtered length:", filtered.length);
 
   const oldContainer = document.getElementById('card-grid');
 
-  // ⭐ Destroy old scroller before replacing DOM node
+  // Destroy old scroller
   destroyScroller();
 
-  // ⭐ Replace container entirely to remove stale measurement nodes
+  // Replace container entirely
   const newContainer = oldContainer.cloneNode(false);
   oldContainer.replaceWith(newContainer);
 
-  // ⭐ Wait for layout to settle
-  await new Promise(resolve => requestAnimationFrame(() => {
-    requestAnimationFrame(resolve);
-  }));
+  // Wait for full layout stability
+  await waitForStableLayout();
 
-  // ⭐ Create new scroller cleanly
   console.log("fullData length after filter (should be unchanged):", fullData.length);
+
+  // Initialize scroller cleanly
   scroller = new VirtualScroller(newContainer, filtered, isAdmin);
 }
 
 // ---------------------------------------------
-// Load data + initialize scroller
+// Load data + initialize scroller (Option C)
 // ---------------------------------------------
 async function loadData() {
   try {
@@ -76,13 +95,13 @@ async function loadData() {
 
     const data = await response.json();
     console.log("Loaded data length:", data.length);
-    const container = document.getElementById('card-grid');
 
     fullData = data;
 
-    await new Promise(resolve => requestAnimationFrame(() => {
-      requestAnimationFrame(resolve);
-    }));
+    const container = document.getElementById('card-grid');
+
+    // Wait for full layout stability
+    await waitForStableLayout();
 
     destroyScroller();
 
@@ -98,9 +117,12 @@ async function loadData() {
 }
 
 // ---------------------------------------------
-// Start the app
+// Start the app (Option C)
 // ---------------------------------------------
-window.addEventListener("DOMContentLoaded", loadData);
+window.addEventListener("DOMContentLoaded", () => {
+  // Wait for full load before initializing data
+  window.addEventListener("load", loadData, { once: true });
+});
 
 window.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("back-to-top");
