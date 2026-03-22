@@ -23,9 +23,17 @@
       <span class="logo">NatDex</span>
       <div class="top-controls">
         <input type="text" id="filter-text" placeholder="Search cards…">
-        <select id="filter-dropdown">
-          <option value="">All Types</option>
-        </select>
+<select id="type-dropdown" class="filter-dropdown">
+  <option value="all">All Types</option>
+  <option value="tcg">TCG/OCG Cards</option>
+  <option value="rush">Rush Duel</option>
+  <option value="real">Real Cards</option>
+  <option value="fake">Not Cards</option>
+  <option value="token">Tokens</option>
+  <option value="vg">Video Game</option>
+  <option value="manga">Manga</option>
+  <option value="nope">Missing</option>
+</select>
         <button id="back-to-top">Top</button>
         <a href="#" id="login-link">Login</a>
         <a href="#" id="socials-link">Socials</a>
