@@ -36,3 +36,9 @@ async function loadData() {
 
 // Start the app
 window.addEventListener("DOMContentLoaded", loadData);
+document.getElementById("back-to-top").addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
