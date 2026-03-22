@@ -12,6 +12,7 @@ body {
   padding: 0px;
 }
 #hero {
+  margin-top: 60px; /* same as top-bar height */
   height: 35vh;
   display: flex;
   flex-direction: column;
@@ -19,6 +20,7 @@ body {
   padding: 0 20px;
   background: #111;
 }
+
 
 /* Main container */
 #card-grid {
