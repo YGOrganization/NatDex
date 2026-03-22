@@ -119,10 +119,12 @@ body {
    ============================ */
 
 #top-bar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   height: 60px;
-  background: #222; /* change to your desired color */
+  background: #222; /* your desired color */
   color: white;
   display: flex;
   align-items: center;
