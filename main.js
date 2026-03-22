@@ -12,6 +12,18 @@ let fullData = [];
 let scroller = null;
 
 // ---------------------------------------------
+// Destroy old scroller safely
+// ---------------------------------------------
+function destroyScroller() {
+  if (scroller) {
+    if (typeof scroller.destroy === "function") {
+      scroller.destroy();
+    }
+    scroller = null;
+  }
+}
+
+// ---------------------------------------------
 // Convert wildcard pattern to regex
 // ---------------------------------------------
 function patternToRegex(pattern) {
@@ -23,7 +35,7 @@ function patternToRegex(pattern) {
 }
 
 // ---------------------------------------------
-// Apply search filter (WITH layout wait fix)
+// Apply search filter (WITH destroy + layout wait)
 // ---------------------------------------------
 async function applySearchFilter(pattern) {
   if (!fullData.length) return;
@@ -31,17 +43,22 @@ async function applySearchFilter(pattern) {
   const regex = patternToRegex(pattern);
 
   const filtered = fullData.filter(card =>
-    regex.test(card.name) // adjust if your field is different
+    regex.test(card.name)
   );
 
   const container = document.getElementById('card-grid');
+
+  // ⭐ Destroy old scroller before clearing DOM
+  destroyScroller();
+
   container.innerHTML = ""; // clear old content
 
-  // ⭐ WAIT FOR LAYOUT TO SETTLE BEFORE INITIALIZING
+  // ⭐ Wait for layout to settle before re-init
   await new Promise(resolve => requestAnimationFrame(() => {
     requestAnimationFrame(resolve);
   }));
 
+  // ⭐ Create new scroller cleanly
   scroller = new VirtualScroller(container, filtered, isAdmin);
 }
 
@@ -65,6 +82,9 @@ async function loadData() {
     await new Promise(resolve => requestAnimationFrame(() => {
       requestAnimationFrame(resolve);
     }));
+
+    // ⭐ Destroy any stale scroller (hot reload safety)
+    destroyScroller();
 
     // Initialize the virtual scroller
     scroller = new VirtualScroller(container, data, isAdmin);
