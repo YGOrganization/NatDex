@@ -6,13 +6,13 @@ import { VirtualScroller } from './virtualScroller.js';
 const isAdmin = false;
 
 // ---------------------------------------------
-// NEW: store full dataset + current scroller
+// Store full dataset + current scroller
 // ---------------------------------------------
 let fullData = [];
 let scroller = null;
 
 // ---------------------------------------------
-// NEW: convert wildcard pattern to regex
+// Convert wildcard pattern to regex
 // ---------------------------------------------
 function patternToRegex(pattern) {
   // Escape regex special chars except *
@@ -23,9 +23,9 @@ function patternToRegex(pattern) {
 }
 
 // ---------------------------------------------
-// NEW: apply search filter
+// Apply search filter (WITH layout wait fix)
 // ---------------------------------------------
-function applySearchFilter(pattern) {
+async function applySearchFilter(pattern) {
   if (!fullData.length) return;
 
   const regex = patternToRegex(pattern);
@@ -34,13 +34,20 @@ function applySearchFilter(pattern) {
     regex.test(card.name) // adjust if your field is different
   );
 
-  // Reinitialize the scroller
   const container = document.getElementById('card-grid');
   container.innerHTML = ""; // clear old content
+
+  // ⭐ WAIT FOR LAYOUT TO SETTLE BEFORE INITIALIZING
+  await new Promise(resolve => requestAnimationFrame(() => {
+    requestAnimationFrame(resolve);
+  }));
 
   scroller = new VirtualScroller(container, filtered, isAdmin);
 }
 
+// ---------------------------------------------
+// Load data + initialize scroller
+// ---------------------------------------------
 async function loadData() {
   try {
     const response = await fetch('./data.json');
@@ -51,7 +58,7 @@ async function loadData() {
     const data = await response.json();
     const container = document.getElementById('card-grid');
 
-    // NEW: store full dataset
+    // Store full dataset
     fullData = data;
 
     // Wait for DOM + CSS + layout to fully settle
@@ -71,7 +78,9 @@ async function loadData() {
   }
 }
 
+// ---------------------------------------------
 // Start the app
+// ---------------------------------------------
 window.addEventListener("DOMContentLoaded", loadData);
 
 window.addEventListener("DOMContentLoaded", () => {
