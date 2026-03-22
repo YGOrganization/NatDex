@@ -36,3 +36,11 @@ async function loadData() {
 
 // Start the app
 window.addEventListener("DOMContentLoaded", loadData);
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("back-to-top");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      window.scrollTo(0, 0);
+    });
+  }
+});
