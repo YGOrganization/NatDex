@@ -27,15 +27,13 @@ function destroyScroller() {
 // Convert wildcard pattern to regex
 // ---------------------------------------------
 function patternToRegex(pattern) {
-  // Escape regex special chars except *
   const escaped = pattern.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&');
-  // Convert * to .*
   const regexPattern = escaped.replace(/\*/g, '.*');
-  return new RegExp(regexPattern, 'i'); // match anywhere, case-insensitive
+  return new RegExp(regexPattern, 'i');
 }
 
 // ---------------------------------------------
-// Apply search filter (WITH destroy + layout wait)
+// Apply search filter (WITH container replacement)
 // ---------------------------------------------
 async function applySearchFilter(pattern) {
   if (!fullData.length) return;
@@ -46,20 +44,22 @@ async function applySearchFilter(pattern) {
     regex.test(card.name)
   );
 
-  const container = document.getElementById('card-grid');
+  const oldContainer = document.getElementById('card-grid');
 
-  // ⭐ Destroy old scroller before clearing DOM
+  // ⭐ Destroy old scroller before replacing DOM node
   destroyScroller();
 
-  container.innerHTML = ""; // clear old content
+  // ⭐ Replace container entirely to remove stale measurement nodes
+  const newContainer = oldContainer.cloneNode(false);
+  oldContainer.replaceWith(newContainer);
 
-  // ⭐ Wait for layout to settle before re-init
+  // ⭐ Wait for layout to settle
   await new Promise(resolve => requestAnimationFrame(() => {
     requestAnimationFrame(resolve);
   }));
 
   // ⭐ Create new scroller cleanly
-  scroller = new VirtualScroller(container, filtered, isAdmin);
+  scroller = new VirtualScroller(newContainer, filtered, isAdmin);
 }
 
 // ---------------------------------------------
@@ -75,18 +75,14 @@ async function loadData() {
     const data = await response.json();
     const container = document.getElementById('card-grid');
 
-    // Store full dataset
     fullData = data;
 
-    // Wait for DOM + CSS + layout to fully settle
     await new Promise(resolve => requestAnimationFrame(() => {
       requestAnimationFrame(resolve);
     }));
 
-    // ⭐ Destroy any stale scroller (hot reload safety)
     destroyScroller();
 
-    // Initialize the virtual scroller
     scroller = new VirtualScroller(container, data, isAdmin);
 
   } catch (err) {
@@ -104,13 +100,11 @@ async function loadData() {
 window.addEventListener("DOMContentLoaded", loadData);
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Back to top
   const btn = document.getElementById("back-to-top");
   if (btn) {
     btn.addEventListener("click", () => window.scrollTo(0, 0));
   }
 
-  // Search filter
   const searchInput = document.getElementById("filter-text");
   if (searchInput) {
     let debounceTimer = null;
