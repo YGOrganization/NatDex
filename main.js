@@ -80,6 +80,10 @@ async function applySearchFilter(pattern) {
   console.log("fullData length after filter (should be unchanged):", fullData.length);
 
   // Initialize scroller cleanly
+  // Force a grid reflow to ensure correct column count
+newContainer.style.display = "none";
+newContainer.offsetHeight; // force reflow
+newContainer.style.display = "";
   scroller = new VirtualScroller(newContainer, filtered, isAdmin);
 }
 
@@ -104,7 +108,12 @@ async function loadData() {
     await waitForStableLayout();
 
     destroyScroller();
+// ⭐ Force a grid reflow before initializing VirtualScroller
+container.style.display = "none";
+container.offsetHeight; // forces reflow
+container.style.display = "";
 
+// Now initialize the scroller with correct measurements
     scroller = new VirtualScroller(container, data, isAdmin);
 
   } catch (err) {
