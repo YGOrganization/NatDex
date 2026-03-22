@@ -194,3 +194,6 @@ justify-content: center;
 #socials-link:hover {
   text-decoration: underline;
 }
+.card {
+  height: 300px !important;
+}
