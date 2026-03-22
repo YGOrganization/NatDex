@@ -33,7 +33,7 @@ function patternToRegex(pattern) {
 }
 
 // ---------------------------------------------
-// Wait for FULL layout stability (Option C)
+// Wait for FULL layout stability
 // ---------------------------------------------
 async function waitForStableLayout() {
   // DOM + CSS layout
@@ -52,7 +52,7 @@ async function waitForStableLayout() {
 }
 
 // ---------------------------------------------
-// Apply search filter (with container replacement + full layout wait)
+// Apply search filter
 // ---------------------------------------------
 async function applySearchFilter(pattern) {
   if (!fullData.length) return;
@@ -74,29 +74,26 @@ async function applySearchFilter(pattern) {
   const newContainer = oldContainer.cloneNode(false);
   oldContainer.replaceWith(newContainer);
 
-  // Wait for full layout stability
+  // Wait for layout to stabilize
   await waitForStableLayout();
-// ⭐ Wait for all images to load so card height is correct
-await Promise.all(
-  Array.from(document.images)
-    .filter(img => !img.complete)
-    .map(img => new Promise(resolve => {
-      img.onload = img.onerror = resolve;
-    }))
-);
+
+  // ⭐ Force layout so container gets REAL width
+  newContainer.offsetWidth;
+
+  // ⭐ Initialize scroller and WAIT for it
+  scroller = await new VirtualScroller(newContainer, filtered, isAdmin);
+
+  // ⭐ Recalculate columns AFTER layout is real
+  scroller.calculateColumns();
+
+  // ⭐ Re-render with correct math
+  scroller.render();
 
   console.log("fullData length after filter (should be unchanged):", fullData.length);
-
-  // Initialize scroller cleanly
-  // Force a grid reflow to ensure correct column count
-newContainer.style.display = "none";
-newContainer.offsetHeight; // force reflow
-newContainer.style.display = "";
-  scroller = new VirtualScroller(newContainer, filtered, isAdmin);
 }
 
 // ---------------------------------------------
-// Load data + initialize scroller (Option C)
+// Load data + initialize scroller
 // ---------------------------------------------
 async function loadData() {
   try {
@@ -112,26 +109,22 @@ async function loadData() {
 
     const container = document.getElementById('card-grid');
 
-    // Wait for full layout stability
+    // Wait for layout to stabilize
     await waitForStableLayout();
-    // ⭐ Wait for all images to load so card height is correct
-await Promise.all(
-  Array.from(document.images)
-    .filter(img => !img.complete)
-    .map(img => new Promise(resolve => {
-      img.onload = img.onerror = resolve;
-    }))
-);
 
     destroyScroller();
-    
-// ⭐ Force a grid reflow before initializing VirtualScroller
-container.style.display = "none";
-container.offsetHeight; // forces reflow
-container.style.display = "";
 
-// Now initialize the scroller with correct measurements
-    scroller = new VirtualScroller(container, data, isAdmin);
+    // ⭐ Force layout so container gets REAL width
+    container.offsetWidth;
+
+    // ⭐ Initialize scroller and WAIT for it
+    scroller = await new VirtualScroller(container, data, isAdmin);
+
+    // ⭐ Recalculate columns AFTER layout is real
+    scroller.calculateColumns();
+
+    // ⭐ Re-render with correct math
+    scroller.render();
 
   } catch (err) {
     console.error('Failed to load data.json:', err);
@@ -143,7 +136,7 @@ container.style.display = "";
 }
 
 // ---------------------------------------------
-// Start the app (Option C)
+// Start the app
 // ---------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
   // Wait for full load before initializing data
