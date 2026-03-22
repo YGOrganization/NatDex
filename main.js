@@ -39,10 +39,11 @@ async function applySearchFilter(pattern) {
   if (!fullData.length) return;
 
   const regex = patternToRegex(pattern);
-
+console.log("fullData length before filter:", fullData.length);
   const filtered = fullData.filter(card =>
     regex.test(card.name)
   );
+console.log("filtered length:", filtered.length);
 
   const oldContainer = document.getElementById('card-grid');
 
@@ -59,6 +60,7 @@ async function applySearchFilter(pattern) {
   }));
 
   // ⭐ Create new scroller cleanly
+  console.log("fullData length after filter (should be unchanged):", fullData.length);
   scroller = new VirtualScroller(newContainer, filtered, isAdmin);
 }
 
@@ -73,6 +75,7 @@ async function loadData() {
     }
 
     const data = await response.json();
+    console.log("Loaded data length:", data.length);
     const container = document.getElementById('card-grid');
 
     fullData = data;
