@@ -161,13 +161,29 @@ justify-content: center;
   color: white;
 }
 
-#filter-dropdown {
+/* Dropdown styling */
+#type-dropdown {
   padding: 6px 10px;
   border-radius: 4px;
   border: 1px solid #555;
   background: #333;
   color: white;
+  cursor: pointer;
+  height: 32px;
+  margin-left: 8px; /* matches spacing of search box */
 }
+
+/* Optional hover/focus polish */
+#type-dropdown:hover {
+  border-color: #888;
+}
+
+#type-dropdown:focus {
+  outline: none;
+  border-color: #0078d4;
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
 
 /* Back to top button */
 #back-to-top {
