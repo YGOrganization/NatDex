@@ -41,7 +41,8 @@ body {
   width: 100%;
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(var(--vs-columns, 10), minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, 200px);
+justify-content: center;
 }
 
 /* Card block */
