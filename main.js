@@ -76,6 +76,14 @@ async function applySearchFilter(pattern) {
 
   // Wait for full layout stability
   await waitForStableLayout();
+// ⭐ Wait for all images to load so card height is correct
+await Promise.all(
+  Array.from(document.images)
+    .filter(img => !img.complete)
+    .map(img => new Promise(resolve => {
+      img.onload = img.onerror = resolve;
+    }))
+);
 
   console.log("fullData length after filter (should be unchanged):", fullData.length);
 
@@ -106,8 +114,17 @@ async function loadData() {
 
     // Wait for full layout stability
     await waitForStableLayout();
+    // ⭐ Wait for all images to load so card height is correct
+await Promise.all(
+  Array.from(document.images)
+    .filter(img => !img.complete)
+    .map(img => new Promise(resolve => {
+      img.onload = img.onerror = resolve;
+    }))
+);
 
     destroyScroller();
+    
 // ⭐ Force a grid reflow before initializing VirtualScroller
 container.style.display = "none";
 container.offsetHeight; // forces reflow
