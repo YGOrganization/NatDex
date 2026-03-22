@@ -12,6 +12,27 @@ let fullData = [];
 let scroller = null;
 
 // ---------------------------------------------
+// Active filters
+// ---------------------------------------------
+let activeTextFilter = "";
+let activeTypeFilter = "all";
+
+// ---------------------------------------------
+// Dropdown → color mapping (EXACT data.json strings)
+// ---------------------------------------------
+const typeFilterMap = {
+  "all": "all",
+  "tcg": ["White", "Green"],
+  "rush": ["Yellow"],
+  "real": ["White", "Yellow", "Green"],
+  "fake": ["Light Grey", "Magenta", "Blue", "Dark Grey", "Black"],
+  "token": ["Light Grey"],
+  "vg": ["Blue"],
+  "manga": ["Magenta"],
+  "nope": ["Tan", "Magenta", "Dark Grey"]
+};
+
+// ---------------------------------------------
 // Destroy old scroller safely
 // ---------------------------------------------
 function destroyScroller() {
@@ -36,12 +57,10 @@ function patternToRegex(pattern) {
 // Wait for FULL layout stability
 // ---------------------------------------------
 async function waitForStableLayout() {
-  // DOM + CSS layout
   await new Promise(resolve => requestAnimationFrame(() => {
     requestAnimationFrame(resolve);
   }));
 
-  // Images, fonts, final layout pass
   if (document.readyState === "complete") {
     return;
   }
@@ -52,44 +71,36 @@ async function waitForStableLayout() {
 }
 
 // ---------------------------------------------
-// Apply search filter
+// Apply BOTH filters (dropdown + text)
 // ---------------------------------------------
-async function applySearchFilter(pattern) {
-  if (!fullData.length) return;
+async function applyCombinedFilters() {
+  let filtered = fullData;
 
-  const regex = patternToRegex(pattern);
-  console.log("fullData length before filter:", fullData.length);
+  // 1. Apply type filter
+  if (activeTypeFilter !== "all") {
+    const allowedColors = typeFilterMap[activeTypeFilter];
+    filtered = filtered.filter(card => allowedColors.includes(card.color));
+  }
 
-  const filtered = fullData.filter(card =>
-    regex.test(card.name)
-  );
-  console.log("filtered length:", filtered.length);
+  // 2. Apply text filter
+  if (activeTextFilter.trim() !== "") {
+    const regex = patternToRegex(activeTextFilter);
+    filtered = filtered.filter(card => regex.test(card.name));
+  }
 
+  // 3. Rebuild scroller using the SAFE pipeline
   const oldContainer = document.getElementById('card-grid');
-
-  // Destroy old scroller
   destroyScroller();
 
-  // Replace container entirely
   const newContainer = oldContainer.cloneNode(false);
   oldContainer.replaceWith(newContainer);
 
-  // Wait for layout to stabilize
   await waitForStableLayout();
-
-  // ⭐ Force layout so container gets REAL width
   newContainer.offsetWidth;
 
-  // ⭐ Initialize scroller and WAIT for it
   scroller = await new VirtualScroller(newContainer, filtered, isAdmin);
-
-  // ⭐ Recalculate columns AFTER layout is real
   scroller.calculateColumns();
-
-  // ⭐ Re-render with correct math
   scroller.render();
-
-  console.log("fullData length after filter (should be unchanged):", fullData.length);
 }
 
 // ---------------------------------------------
@@ -109,21 +120,14 @@ async function loadData() {
 
     const container = document.getElementById('card-grid');
 
-    // Wait for layout to stabilize
     await waitForStableLayout();
 
     destroyScroller();
 
-    // ⭐ Force layout so container gets REAL width
     container.offsetWidth;
 
-    // ⭐ Initialize scroller and WAIT for it
     scroller = await new VirtualScroller(container, data, isAdmin);
-
-    // ⭐ Recalculate columns AFTER layout is real
     scroller.calculateColumns();
-
-    // ⭐ Re-render with correct math
     scroller.render();
 
   } catch (err) {
@@ -139,7 +143,6 @@ async function loadData() {
 // Start the app
 // ---------------------------------------------
 window.addEventListener("DOMContentLoaded", () => {
-  // Wait for full load before initializing data
   window.addEventListener("load", loadData, { once: true });
 });
 
@@ -149,6 +152,7 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => window.scrollTo(0, 0));
   }
 
+  // Text filter
   const searchInput = document.getElementById("filter-text");
   if (searchInput) {
     let debounceTimer = null;
@@ -156,8 +160,18 @@ window.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        applySearchFilter(searchInput.value);
+        activeTextFilter = searchInput.value;
+        applyCombinedFilters();
       }, 200);
+    });
+  }
+
+  // Dropdown filter
+  const typeDropdown = document.getElementById("type-dropdown");
+  if (typeDropdown) {
+    typeDropdown.addEventListener("change", () => {
+      activeTypeFilter = typeDropdown.value;
+      applyCombinedFilters();
     });
   }
 });
