@@ -39,7 +39,7 @@ export function resolveImage(entry) {
     const art1 = cardEntry["1"];
     if (!art1 || !art1.bestArt) return null;
 
-    return "https://artworks.ygoresources.com" + art1.bestArt;
+    return "https://artworks.ygoresources.com/" + art1.bestArt;
   }
 
   // All other cards: no auto-art yet
