@@ -1,7 +1,3 @@
-if (entry.id === 4007) {
-  console.log("Renderer sees entry:", entry);
-}
-
 import { COLOR_RULES } from './colorRules.js';
 import { resolveImage } from './imageResolver.js';
 
@@ -57,6 +53,9 @@ function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
 }
 
 export function renderCardBlock(entry, isAdmin = false) {
+  if (entry.id === 4007) {
+  console.log("Renderer sees entry:", entry);
+}
   if (!entry || !entry.id) {
     return null;
   }
