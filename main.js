@@ -1,31 +1,7 @@
 console.log("main.js loaded");
-// ---------------------------------------------
-// Global manifest cache
-// ---------------------------------------------
-let ygoManifest = null;
-
-// ---------------------------------------------
-// Load YGOResources manifest.json (cached)
-// ---------------------------------------------
-export async function loadYgoManifest() {
-  if (ygoManifest) return ygoManifest; // already loaded
-
-  try {
-    const res = await fetch("https://artworks.ygoresources.com/manifest.json");
-    if (!res.ok) {
-      console.error("Failed to load YGO manifest:", res.status);
-      return null;
-    }
-    ygoManifest = await res.json();
-    console.log("YGO manifest loaded");
-    return ygoManifest;
-  } catch (err) {
-    console.error("Error loading YGO manifest:", err);
-    return null;
-  }
-}
 
 import { VirtualScroller } from './virtualScroller.js';
+import { loadYgoManifest } from './manifestLoader.js';
 
 // MVP: no admin login yet
 const isAdmin = false;
@@ -133,6 +109,9 @@ async function applyCombinedFilters() {
 // ---------------------------------------------
 async function loadData() {
   try {
+    // Load manifest BEFORE rendering anything
+    await loadYgoManifest();
+
     const response = await fetch('./data.json');
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
