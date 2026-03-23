@@ -39,6 +39,7 @@ if (imageUrl) {
   // Create the transformed image
   const img = document.createElement('img');
   img.className = 'card-artwork-only';
+  img.loading = "lazy"; 
   img.src = imageUrl;
   img.alt = entry.name || '';
 
