@@ -1,3 +1,7 @@
+if (entry.id === 4007) {
+  console.log("Renderer sees entry:", entry);
+}
+
 import { COLOR_RULES } from './colorRules.js';
 import { resolveImage } from './imageResolver.js';
 
