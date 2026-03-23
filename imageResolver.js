@@ -27,21 +27,31 @@ export function resolveImage(entry) {
     return entry.image;
   }
 
-  // Manifest must already be loaded
-  const manifest = getYgoManifest();
-  if (!manifest) return null;
+// Manifest must already be loaded
+const manifest = getYgoManifest();
+if (!manifest) return null;
 
-  // TEST PHASE: Only Blue-Eyes White Dragon (4007)
-  if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) {
-    console.log("Resolver hit for entry:", entry);
-    const cardEntry = manifest.cards?.["4007"];
-    if (!cardEntry) return null;
+// TEST PHASE: Only Blue-Eyes White Dragon (4007)
+if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) {
+  console.log("Resolver hit for entry:", entry);
 
-    const art1 = cardEntry["1"];
-    if (!art1 || !art1.bestArt) return null;
+  const cardEntry = manifest.cards?.["4007"];
+  if (!cardEntry) return null;
 
-    return "https://artworks.ygoresources.com/" + art1.bestArt;
+  const art1 = cardEntry["1"];
+  if (!art1 || !art1.bestArt) return null;
+
+  const url = art1.bestArt;
+
+  // ⭐ FIX: handle protocol-relative URLs like "//artworks-en-n.ygoresources.com/0/40/7_1.png"
+  if (url.startsWith("//")) {
+    return "https:" + url;
   }
+
+  // fallback for any other format
+  return url;
+}
+
 
   // All other cards: no auto-art yet
   return null;
