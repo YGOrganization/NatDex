@@ -66,8 +66,9 @@ function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
 
 /**
  * Render a single card entry as a 3-row block.
+ * Now async because resolveImage() is async.
  */
-export function renderCardBlock(entry, isAdmin = false) {
+export async function renderCardBlock(entry, isAdmin = false) {
   // Guard against completely invalid entries
   if (!entry || !entry.id) {
     return null;
@@ -94,7 +95,9 @@ export function renderCardBlock(entry, isAdmin = false) {
 
   // Normal card rendering
   const hex = colorRule?.hex || '#444';
-  const imageUrl = resolveImage(entry);
+
+  // IMPORTANT: await the async resolver
+  const imageUrl = await resolveImage(entry);
 
   return buildCardBlock(entry, colorKey, hex, imageUrl, true);
 }
@@ -102,11 +105,11 @@ export function renderCardBlock(entry, isAdmin = false) {
 /**
  * Render a list of entries into a container (non-virtual fallback).
  */
-export function renderCardGrid(entries, container, isAdmin = false) {
+export async function renderCardGrid(entries, container, isAdmin = false) {
   container.innerHTML = '';
 
   for (const entry of entries) {
-    const block = renderCardBlock(entry, isAdmin);
+    const block = await renderCardBlock(entry, isAdmin);
     if (block) {
       container.appendChild(block);
     }
