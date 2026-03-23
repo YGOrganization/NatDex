@@ -1,5 +1,12 @@
 import { COLOR_RULES } from './colorRules.js';
+import { loadYgoManifest } from './main.js';
 
+/**
+ * Normalize a color name to a safe key:
+ * - lowercase
+ * - spaces → hyphens
+ * - remove invalid characters
+ */
 function normalizeColorKey(raw) {
   return String(raw || '')
     .trim()
@@ -8,7 +15,11 @@ function normalizeColorKey(raw) {
     .replace(/[^a-z0-9\-]/g, '');
 }
 
-export function resolveImage(entry) {
+/**
+ * Resolve the correct image URL for a card entry.
+ * Now supports YGOResources manifest for Blue-Eyes test.
+ */
+export async function resolveImage(entry) {
   const colorKey = normalizeColorKey(entry.color);
   const colorRule = COLOR_RULES[colorKey];
 
@@ -26,6 +37,25 @@ export function resolveImage(entry) {
     return entry.image;
   }
 
-  // TEMPORARY: disable auto-generation until Yugipedia CORS is fixed
+  // ---------------------------------------------------------
+  // TEST PHASE: Only Blue-Eyes White Dragon (ID 4007)
+  // ---------------------------------------------------------
+  if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) {
+    const manifest = await loadYgoManifest();
+    if (!manifest) return null;
+
+    const cardEntry = manifest.cards?.["4007"];
+    if (!cardEntry) return null;
+
+    const art1 = cardEntry["1"];
+    if (!art1 || !art1.bestArt) return null;
+
+    // Build full URL to the square artwork
+    return "https://artworks.ygoresources.com" + art1.bestArt;
+  }
+
+  // ---------------------------------------------------------
+  // All other cards: no auto-art yet
+  // ---------------------------------------------------------
   return null;
 }
