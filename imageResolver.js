@@ -31,11 +31,9 @@ export function resolveImage(entry) {
   const manifest = getYgoManifest();
   if (!manifest) return null;
 
-  // TEST PHASE: Only Blue-Eyes White Dragon (4007)
-  if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) {
-    console.log("Resolver hit for entry:", entry);
-
-    const cardEntry = manifest.cards?.["4007"];
+  // Auto-artwork for all White and Yellow cards
+  if (colorKey === "white" || colorKey === "yellow") {
+    const cardEntry = manifest.cards?.[String(entry.id)];
     if (!cardEntry) return null;
 
     const art1 = cardEntry["1"];
