@@ -1,12 +1,6 @@
 import { COLOR_RULES } from './colorRules.js';
 import { resolveImage } from './imageResolver.js';
 
-/**
- * Normalize a color name to a safe key:
- * - lowercase
- * - spaces → hyphens
- * - remove invalid characters
- */
 function normalizeColorKey(raw) {
   return String(raw || '')
     .trim()
@@ -15,12 +9,6 @@ function normalizeColorKey(raw) {
     .replace(/[^a-z0-9\-]/g, '');
 }
 
-/**
- * Create a standard 3-row card block:
- * Row 1: ID
- * Row 2: Image (or empty colored cell)
- * Row 3: Name
- */
 function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
   const block = document.createElement('div');
   block.className = 'card-block';
@@ -64,12 +52,7 @@ function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
   return block;
 }
 
-/**
- * Render a single card entry as a 3-row block.
- * Now async because resolveImage() is async.
- */
-export async function renderCardBlock(entry, isAdmin = false) {
-  // Guard against completely invalid entries
+export function renderCardBlock(entry, isAdmin = false) {
   if (!entry || !entry.id) {
     return null;
   }
@@ -77,39 +60,26 @@ export async function renderCardBlock(entry, isAdmin = false) {
   const colorKey = normalizeColorKey(entry.color);
   const colorRule = COLOR_RULES[colorKey];
 
-  // Admin-only handling: show placeholder in public mode
+  // Admin-only handling
   if (colorRule?.adminOnly && !isAdmin) {
     const tanKey = 'tan';
     const tanRule = COLOR_RULES[tanKey];
     const hex = tanRule?.hex || '#fff2cc';
 
-    // Placeholder: ID only, no name, no image, tan color
-    return buildCardBlock(
-      entry,
-      tanKey,
-      hex,
-      null,
-      false // hide name
-    );
+    return buildCardBlock(entry, tanKey, hex, null, false);
   }
 
-  // Normal card rendering
   const hex = colorRule?.hex || '#444';
-
-  // IMPORTANT: await the async resolver
-  const imageUrl = await resolveImage(entry);
+  const imageUrl = resolveImage(entry);
 
   return buildCardBlock(entry, colorKey, hex, imageUrl, true);
 }
 
-/**
- * Render a list of entries into a container (non-virtual fallback).
- */
-export async function renderCardGrid(entries, container, isAdmin = false) {
+export function renderCardGrid(entries, container, isAdmin = false) {
   container.innerHTML = '';
 
   for (const entry of entries) {
-    const block = await renderCardBlock(entry, isAdmin);
+    const block = renderCardBlock(entry, isAdmin);
     if (block) {
       container.appendChild(block);
     }
