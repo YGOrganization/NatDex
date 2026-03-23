@@ -29,19 +29,27 @@ function buildCardBlock(entry, colorKey, hex, imageUrl, showName = true) {
 
   // Row 2: Image (or empty)
   const imageRow = document.createElement('div');
-  imageRow.className = 'card-row card-row-image';
+imageRow.className = 'card-row card-row-image';
 
-  if (imageUrl) {
-    const img = document.createElement('img');
-    img.className = 'card-image';
-    img.src = imageUrl;
-    img.alt = entry.name || '';
-    imageRow.appendChild(img);
-  } else {
-    imageRow.classList.add('card-row-empty-image');
-  }
+if (imageUrl) {
+  // Create the square crop container
+  const wrapper = document.createElement('div');
+  wrapper.className = 'card-artwork-container';
 
-  block.appendChild(imageRow);
+  // Create the transformed image
+  const img = document.createElement('img');
+  img.className = 'card-artwork-only';
+  img.src = imageUrl;
+  img.alt = entry.name || '';
+
+  wrapper.appendChild(img);
+  imageRow.appendChild(wrapper);
+} else {
+  imageRow.classList.add('card-row-empty-image');
+}
+
+block.appendChild(imageRow);
+
 
   // Row 3: Name
   const nameRow = document.createElement('div');
