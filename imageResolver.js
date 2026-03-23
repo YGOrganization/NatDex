@@ -33,6 +33,7 @@ export function resolveImage(entry) {
 
   // TEST PHASE: Only Blue-Eyes White Dragon (4007)
   if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) {
+    console.log("Resolver hit for entry:", entry);
     const cardEntry = manifest.cards?.["4007"];
     if (!cardEntry) return null;
 
