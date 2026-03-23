@@ -39,20 +39,33 @@ if (entry.id === 4007 && (entry.color === "White" || entry.color === "Yellow")) 
   if (!cardEntry) return null;
 
   const art1 = cardEntry["1"];
-  if (!art1 || !art1.bestArt) return null;
+  if (!art1) return null;
 
-  const url = art1.bestArt;
-
-  // ⭐ FIX: handle protocol-relative URLs like "//artworks-en-n.ygoresources.com/0/40/7_1.png"
-  if (url.startsWith("//")) {
-    return "https:" + url;
+  // ⭐ 1. Prefer neuron_high (art-only crop)
+  const neuron = art1.idx?.en?.find(x => x.source === "neuron_high");
+  if (neuron?.path) {
+    return "https:" + neuron.path;
   }
 
-  // fallback for any other format
-  return url;
-}
+  // ⭐ 2. Fall back to bestArt
+  if (art1.bestArt?.startsWith("//")) {
+    return "https:" + art1.bestArt;
+  }
 
+  // ⭐ 3. Fall back to bestTCG / bestOCG
+  if (art1.bestTCG?.startsWith("//")) {
+    return "https:" + art1.bestTCG;
+  }
+  if (art1.bestOCG?.startsWith("//")) {
+    return "https:" + art1.bestOCG;
+  }
 
-  // All other cards: no auto-art yet
+  // ⭐ 4. Fall back to database scan
+  const db = art1.idx?.en?.find(x => x.source === "database");
+  if (db?.path) {
+    return "https:" + db.path;
+  }
+
   return null;
 }
+
