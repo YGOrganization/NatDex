@@ -90,6 +90,23 @@ justify-content: center;
   border-radius: 0;       /* ensure no rounding unless you want it */
   background: #000;       /* optional: prevents white flash on load */
 }
+/* Square crop container */
+.card-artwork-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+/* Transform full-card image into square artwork crop */
+.card-artwork-only {
+    position: absolute;
+    width: 132.642%;
+    height: 192.746%;
+    left: -16.58%;
+    top: -35.75%;
+}
+
 .card-row-name {
   font-size: 13px;
   text-align: center;
